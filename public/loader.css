@@ -1,0 +1,406 @@
+/*@import url("https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i");*/
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#app-site {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.loader {
+  position: relative;
+  margin: 0 auto;
+  width: 60px;
+  height: 100vh;
+
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  -webkit-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+}
+
+.loading {
+  width: 120px;
+}
+
+/*Custom CSS*/
+
+.custom-enable{
+  cursor : pointer;
+}
+
+.custom-center{
+  margin: auto !important;
+}
+
+.custom-package{
+  width: 90%;
+  margin: auto;
+  cursor: pointer;
+}
+
+.custom-package-header{
+  text-align : left !important;
+  height: 100%;
+}
+
+.custom-package-header > .gx-price{
+  font-size: 24px !important;
+}
+
+
+.custom-package-body{
+  font-size: 16px;
+}
+
+.custom-rules{
+  background : #5e450c !important;
+}
+
+.custom-menu-header{
+  color : #E2D2BB !important;
+}
+
+.custom-menu-body{
+  color : #BEB09B !important;
+}
+
+.custom-tier-big{
+  background : #8b5390 !important;
+}
+
+.custom-tier-small{
+  background : #9b4cad !important;
+}
+
+.custom-product-big{
+  background: #4b1022 !important;
+}
+
+.custom-product-small{
+  background: #a7254d !important;
+}
+
+.custom-program-big{
+  background: #072760 !important;
+}
+
+.custom-program-small{
+  background: #123d5f !important;
+}
+
+.custom-user-big{
+  background: #8b5390 !important;
+}
+
+.custom-user-small{
+  background: #9b4cad !important;
+}
+
+.custom-promotion{
+  background: #577557 !important;
+}
+
+.custom-simplyblast{
+  background: #365755 !important;
+}
+
+.custom-advertising{
+  background: #85003f !important;
+}
+
+.custom-doorprize{
+  background: #01406b;
+}
+
+.custom-pointvalue{
+  background: #982d01;
+}
+
+.custom-gamification{
+  background: #167a63;
+}
+
+.custom-approval{
+  background: #666699;
+}
+
+.custom-reconciliation{
+  background: #67410f;
+}
+
+.custom-transferpoint{
+  background: #524b42;
+}
+
+.custom-report{
+  background: #b24a17 !important;
+}
+
+.custom-clear-button{
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.custom-collab-item{
+  width: 90%;
+  margin: auto;
+  cursor: pointer;
+}
+
+.custom-collab-header{
+  text-align: center;
+}
+
+.custom-add-voucher{
+  text-align: center;
+}
+
+.custom-add-voucher button,
+.custom-add-voucher span{
+  width: 100%;
+}
+
+.custom-prefix{
+  width: auto !important;
+  margin-left: 20px !important;
+}
+
+.custom-span-voucher{
+  display: block;
+  margin-bottom: 10px;
+}
+
+.custom-modal-tier-header{
+  text-align: center;
+  margin-top: 30px;
+  font-size: 18px;
+}
+
+.custom-modal-tier-title{
+  font-size: 16px;
+  margin-bottom: 20px !important;
+}
+
+.custom-table{
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.custom-register{
+  max-width: 940px;
+  width: 94%;
+  margin: auto;
+  padding: 35px 35px 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+  font-size: 14px;
+}
+
+.custom-logo-register{
+  width: 200px;
+  margin-bottom : 50px;
+}
+
+.custom-back-register{
+  margin-bottom: 0px;
+}
+
+.custom-header-register{
+  margin-bottom : 40px !important;
+}
+
+.custom-profile-banner{
+  background-color: #F27F11 !important;
+}
+
+.custom-term-condition{
+  margin-left: 15px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+
+.custom-register-button{
+  width: 80%;
+  margin: auto;
+}
+
+.custom-box{
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding-top: 20px;
+}
+
+.ant-input-search{
+  width: 25% !important;
+}
+
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell-value-wrap {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 4px 11px;
+}
+
+.editable-cell-fake {
+  cursor: default;
+}
+
+.amcharts-chart-div a {display:none !important;}
+
+.custom-background{
+  background : url("goodie_background.jpg");
+}
+
+/*.gx-app-logo-content-bg:before{*/
+/*  background-color: transparent !important;*/
+/*}*/
+.custom-login-message{
+  text-align: center;
+}
+
+.custom-login-message > h5{
+  color: #545454 !important;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  font-size: 20px;
+}
+
+.gx-app-logo-content{
+  width: 50% !important;
+}
+
+
+.gx-app-login-content{
+  width: 50% !important;
+  background-color: gainsboro !important;
+}
+
+.custom-login-logo{
+  background: #000;
+  height:1px;
+  margin-top:10px;
+}
+
+.custom-login-logo > i {
+  background: #DCDCDC; padding:10px; position:relative; top:-10px; left: 20px
+}
+
+.background {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.background:before {
+   border-top: 2px solid #b0b0b0;
+   content:"";
+   margin: 0 auto; /* this centers the line to the full width specified */
+   position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+   top: 50%; left: 0; right: 0; bottom: 0;
+   width: 95%;
+   z-index: -1;
+ }
+
+.background > span {
+  /* to hide the lines from behind the text, you have to set the background color the same as the container */
+  background: #DCDCDC;
+  padding: 0 15px;
+  color : #b0b0b0
+}
+
+.custom-icon-lg{
+  font-size: 50px;
+}
+
+.custom-login-button{
+  width: 100% !important;
+}
+
+.forgot-container{
+  text-align: right;
+}
+
+.login-footer{
+  margin-top: 20px;
+  text-align: center;
+  color: #b0b0b0;
+}
+
+.copyright{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid #b0b0b0;
+}
+
+.custom-verified-message{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.custom-image-container{
+  max-width: 80% !important;
+  max-height: 80% !important;
+  object-fit: contain !important;
+}
+
+.gx-product-title {
+  font-size: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+.custom-price{
+  margin-top: 20px !important;
+}
+.custom-price > h4{
+  font-size: 20px!important;
+  color: #F8705F;
+}
+.custom-by{
+  color: #F8705F;
+}
+
+.custom-collab-item{
+  cursor: pointer;
+}
+
+@media (max-width: 736px){
+  .ant-input-search{
+    width: 100% !important;
+  }
+  .custom-clear-button{
+    width: 100% !important;
+    margin-top: 0;
+    margin-left: 0;
+  }
+  .custom-back-register{
+    margin-bottom: 40px;
+  }
+}
+
+/*# sourceMappingURL=loader.css.map */
