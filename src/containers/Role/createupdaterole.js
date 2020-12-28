@@ -139,16 +139,16 @@ class CreateUpdateRole extends Component {
                     dataWithPrivileges.push(wPrivileges);
                 })
 
-                const selectedRowKeysx = this.props.data.privileges.map(priv => {
-                    parseInt(priv.privilegeId)
-                });
+                // const selectedRowKeysx = this.props.data.privileges.map(priv => {
+                //     parseInt(priv.privilegeId)
+                // });
                 const prevPrivileges = this.props.data.privileges.reduce((obj, priv) => {
                     return {
                         ...obj,
                         [`${priv.unitCode}_${priv.functionCode}`]: priv
                     }
                 }, {});
-                const selectedRowKeys =     dataSourceRaw.reduce((arr, priv, i) => {
+                const selectedRowKeys = dataSourceRaw.reduce((arr, priv, i) => {
                     if (prevPrivileges[`${priv.unitCode}_${priv.functionCode}`]) {
                         return [...arr, i]
                     } else return arr

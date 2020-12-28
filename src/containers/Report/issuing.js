@@ -1,18 +1,24 @@
 import React, {Component} from "react";
 import SearchForm from '../../components/Form/search';
 import {connect} from "react-redux";
+import AmCharts from "@amcharts/amcharts3-react";
+import {
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  } from 'recharts';
 import {
     issuingReport,
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import {message,
+import {message, Tabs, Card
     // Card, Col,
 } from "antd";
 import CircularProgress from "components/CircularProgress/index";
 // import SweetAlert from "react-bootstrap-sweetalert";
 import moment from 'moment';
 import {CSVLink} from "react-csv";
+
+const { TabPane } = Tabs;
 
 class IssuingReport extends Component {
     csvLink = React.createRef();
@@ -89,9 +95,6 @@ class IssuingReport extends Component {
         if(endDate != null){
             credential.endDate = moment(endDate).format('YYYY-MM-DD');
         }
-
-        console.log('startDate')
-        console.log(startDate)
 
         this.props.issuingReport(credential);
     }
@@ -184,6 +187,12 @@ class IssuingReport extends Component {
         }
     }
 
+    renderColorfulLegendText(value, entry) {
+        const { color } = entry;
+      
+      return <span style={{ color }}>{value}</span>;
+    }
+
     render() {
         // let component = [];
         let {loader, alertMessage, showMessage, result, recordInfo} = this.props;
@@ -192,11 +201,21 @@ class IssuingReport extends Component {
         let {search, endDate, startDate} = this.state;
 
         if(this.props.result.length > 0){
-            this.props.result.forEach((res, i) => {
+            this.props.result.map((res, i) => {
                 res.key = i;
                 res.name = res.memberName;
+                // res.date = moment(res.date, 'DD/MM/YYYY'); 
+                // //format that date into a different format
+                // res.date = (moment(res.date).format("MMMM"))
             });
+
         }
+
+        const data = [...result.reduce( (item, o) => {
+            if (!item.has(o.promotionName)) item.set(o.promotionName, { ...o, value: 0 });
+            item.get(o.promotionName).value++;
+            return item;
+        }, new Map).values()];
 
         let filterParam = {
             search : search,
@@ -234,8 +253,39 @@ class IssuingReport extends Component {
             dataIndex: 'point',
             label: 'Point',
             key: 'point',
-        }
-        ];
+        }];
+
+        const config = {
+            "type": "pie",
+            "theme": "light",
+            "dataProvider": data,
+            "titleField": "promotionName",
+            "valueField": "value",
+            "labelRadius": 5,
+            "outlineAlpha": 0.4,
+            "depth3D": 8,
+            "radius": "42%",
+            // "innerRadius": "60%",
+            "labelText": "[[title]]",
+            "angle": 30,
+
+            "legend":{
+                "position":"bottom",
+                "marginBottom":8    ,
+                "autoMargins":false,
+               },
+
+            "export": {
+                "enabled": true
+            },
+            "titles": [
+                {
+                    "id": "Title-1",
+                    "size": 15,
+                    "text": "Chart Report Issuing"
+                }
+            ],
+        };
 
         return(
             <div>
@@ -243,25 +293,40 @@ class IssuingReport extends Component {
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
-                    <SearchForm
-                        columns={columns}
-                        listData={result}
-                        title='Issuing Report'
-                        placeholder='Search members by name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadData = {downloadData}
-                        filterParam = {filterParam}
-                    />
-                    : ''
-                }
+                <Card>
+
+                        <Tabs defaultActiveKey="1" centered>
+                            <TabPane tab="Chart Report" key="1">
+                                <Card className="gx-card"  title="">
+                                    <div className="App">
+                                        <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                    </div>
+                                </Card>
+                            </TabPane>
+                            <TabPane tab="Table Report" key="2">
+                                {loader === false ?
+                                        <SearchForm
+                                            columns={columns}
+                                            listData={result}
+                                            title= 'Issuing Report'
+                                            placeholder='Search members by name'
+                                            onFilter={this.filterComponent.bind(this)}
+                                            onClearFilter={this.clearFilterComponent.bind(this)}
+                                            recordInfo = {recordInfo}
+                                            onSearch = {this.handleSearch.bind(this)}
+                                            enableDateFilter = {true}
+                                            onFilterDate = {this.handleFilterDate.bind(this)}
+                                            enableDownload = {true}
+                                            onDownload = {this.handleDownload.bind(this)}
+                                            downloadData = {downloadData}
+                                            filterParam = {filterParam}
+                                        />
+                                        : ''
+                                    }
+                            </TabPane>
+                        </Tabs>
+                
+            </Card>
 
                 <CSVLink
                     data={downloadData} headers={columns}

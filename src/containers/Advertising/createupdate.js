@@ -23,6 +23,9 @@ import {
     getListProvince,
     getListCity
 } from "appRedux/actions/Common";
+import {
+    viewMerchant,
+} from "appRedux/actions/Merchant";
 import {Button, Card, Form, Input, Modal, Select, Upload, Icon, DatePicker,
     Table, Popconfirm, InputNumber,
 } from "antd";
@@ -54,8 +57,11 @@ class CreateUpdateAdvertising extends Component {
 
         this.state = {
             data : [],
+            merchant: [],
+            stateProv: [],
             listCity : [],
             programList : [],
+            countryId : [],
             msgContent : '',
             msgType : '',
             rewardDisable : false,
@@ -77,7 +83,7 @@ class CreateUpdateAdvertising extends Component {
 
     componentWillMount(){
         let credential = this.props.authUser;
-
+        this.props.viewMerchant(credential);
         this.props.searchPrograms(credential);
 
         if(this.props.listProvince.length < 1){
@@ -103,6 +109,13 @@ class CreateUpdateAdvertising extends Component {
     }
 
     componentWillReceiveProps(nextProps){
+
+        if (nextProps.merchant !== undefined && nextProps.merchant != this.props.merchant) {
+            let request = {
+                id: nextProps.merchant.address.country
+            };
+            this.props.getListProvince(request);
+        }
 
         if (nextProps.listCity !== undefined) {
             let dataRaw = [];
@@ -167,7 +180,8 @@ class CreateUpdateAdvertising extends Component {
                     this.setState({
                         data: nextProps.data,
                         selectedCities: cities,
-                        count : count
+                        count : count,
+                        // stateProv : cities[0].stateProvId
                     });
                 }
             }
@@ -191,8 +205,11 @@ class CreateUpdateAdvertising extends Component {
                         fileList: fileListRaw
                     })
                 }
-
             }
+
+            // if (nextProps.data.adsCategory === AdsCategory.AdsCategory.COMMON.label)
+            // else if (nextProps.data.adsCategory === AdsCategory.AdsCategory.REWARD.label)
+            // else if (nextProps.data.adsCategory === AdsCategory.AdsCategory.POST.label)
 
             if (nextProps.data.adsCategory === AdsCategory.AdsCategory.COMMON.label) {
                 this.setState({
@@ -346,11 +363,11 @@ class CreateUpdateAdvertising extends Component {
                 })
                 values.cities = cities;
 
-                if(values.cities.length === 0){
-                    this.errorNotification('Please add minimal 1 city');
-                    error = true;
-                    return;
-                }
+                // if(values.cities.length === 0){
+                //     this.errorNotification('Please add minimal 1 city');
+                //     error = true;
+                //     return;
+                // }
 
                 let cityId = '';
                 cityId = localStorage.getItem('cityId')
@@ -565,7 +582,7 @@ class CreateUpdateAdvertising extends Component {
     render() {
         const {getFieldDecorator} = this.props.form;
         let {data} = this.state;
-        const { msgShow, msgType, msgContent, previewVisible, previewImage, fileList, endOpen, programList, selectedCities } = this.state;
+        const { msgShow, msgType, msgContent, previewVisible, previewImage, fileList, endOpen, programList, selectedCities, stateProv } = this.state;
 
 
         let optionProvince= [];
@@ -697,18 +714,6 @@ class CreateUpdateAdvertising extends Component {
                         )}
                     </FormItem>
 
-                    <FormItem {...formItemLayout} label='Ads Content'>
-                        {getFieldDecorator('adsContent', {
-                            // rules: [{
-                            //     required: true,
-                            //     message: 'Please input ads content'
-                            // }],
-                            initialValue: data.adsContent
-                        })(
-                            <Input placeholder='Ads Content'/>
-                        )}
-                    </FormItem>
-
                     <FormItem {...formItemLayout} label='Start Date'>
                         {getFieldDecorator('startDate', {
                             // rules: [{
@@ -744,13 +749,13 @@ class CreateUpdateAdvertising extends Component {
                         )}
                     </FormItem>
 
-                    <FormItem {...formItemLayout} label='Province Id'>
+                    {/* <FormItem {...formItemLayout} label='Province Id'>
                         {getFieldDecorator('stateProvId',{
                             // rules: [{
                             //     required: true,
                             //     message: 'Please input province'
                             // }],
-                            initialValue: data.stateProvId
+                            initialValue: stateProv
                         })(
                             <Select
                                 onChange={this.changeProvince.bind(this)}
@@ -769,7 +774,7 @@ class CreateUpdateAdvertising extends Component {
                     <FormItem {...formItemLayout1} label='Cities'>
                         <Button
                             // disabled={this.state.isButtonDisabled}
-                            onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
+                            onClick={this.handleAdd.bind(this)} type="primary" style={{ marginBottom: 16 }}>
                             Add City
                         </Button>
                         <Table
@@ -780,7 +785,7 @@ class CreateUpdateAdvertising extends Component {
                             dataSource={selectedCities}
                             columns={columnsCities}
                         />
-                    </FormItem>
+                    </FormItem> */}
 
                     {/*<FormItem {...formItemLayout} label='City Id'>*/}
                     {/*    {getFieldDecorator('cityId',{*/}
@@ -810,7 +815,13 @@ class CreateUpdateAdvertising extends Component {
                             //     message: 'Please input article category',
                             // }],
                         })(
-                            <Select style={{width: '30%'}}>
+                            <Select style={{width: '30%'}}
+                                    placeholder={
+                                        <div>
+                                            <div style={{display:'inline-block'}} className="icon icon-map-drawing"></div>
+                                            <span style={{marginLeft:'5px'}}>Article Category</span>
+                                        </div>
+                                    }>
                                 {optionsArticle}
                             </Select>
                         )}
@@ -824,7 +835,14 @@ class CreateUpdateAdvertising extends Component {
                             //     message: 'Please input ads category',
                             // }],
                         })(
-                            <Select style={{width: '30%'}} onChange={this.changeListbox.bind(this)}>
+                            <Select style={{width: '30%'}} 
+                                    onChange={this.changeListbox.bind(this)}
+                                    placeholder={
+                                        <div>
+                                            <div style={{display:'inline-block'}} className="icon icon-map-drawing"></div>
+                                            <span style={{marginLeft:'5px'}}>Article Category</span>
+                                        </div>
+                                    }>
                                 {optionsAdsCategory}
                             </Select>
                         )}
@@ -838,7 +856,14 @@ class CreateUpdateAdvertising extends Component {
                             //     message: 'Please input reward',
                             // }],
                         })(
-                            <Select style={{width: '50%'}} disabled={this.state.rewardDisable}>
+                            <Select style={{width: '50%'}} 
+                                disabled={this.state.rewardDisable}
+                                placeholder={
+                                    <div>
+                                        <div style={{display:'inline-block'}} className="icon icon-map-drawing"></div>
+                                        <span style={{marginLeft:'5px'}}>Reward</span>
+                                    </div>
+                                }>
                                 {optionsPrograms}
                             </Select>
                         )}
@@ -1025,7 +1050,7 @@ class EditableCell extends React.Component {
     }
 }
 
-const mapStateToProps = ({auth, advertisingState, commonState, programState}) => {
+const mapStateToProps = ({auth, advertisingState, commonState, programState, merchantState}) => {
     const {authUser} = auth;
     const {
         filePath,
@@ -1033,14 +1058,15 @@ const mapStateToProps = ({auth, advertisingState, commonState, programState}) =>
         listCity
     } = commonState;
     const {listPrograms} = programState;
+    const {merchant} = merchantState;
     const {data, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData} = advertisingState
-    return {authUser,
+    return {authUser, merchant,
         listProvince,
         listCity,
         data, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, filePath, listPrograms}
 };
 
-export default connect(mapStateToProps, {viewAdvertising, updateAdvertising, searchPrograms, createAdvertising, resetStatus, uploadImage, resetFilePath,
+export default connect(mapStateToProps, {viewAdvertising, updateAdvertising, searchPrograms, viewMerchant, createAdvertising, resetStatus, uploadImage, resetFilePath,
     getListProvince,
     getListCity
 })(Form.create()(CreateUpdateAdvertising));

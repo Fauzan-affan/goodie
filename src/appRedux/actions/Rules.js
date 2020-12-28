@@ -16,11 +16,12 @@ export const searchRules = (request) => {
     };
 };
 
-export const filterSortSearch = (pagination, filters, sorter) => {
+export const filterSortSearch = (pagination, filters, sorter, search) => {
     let filter  = {
         pagination : pagination,
         filters : filters,
-        sorter : sorter
+        sorter : sorter,
+        search : search
     };
     return {
         type: FILTER_SEARCH_RULES,

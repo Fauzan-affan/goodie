@@ -117,7 +117,7 @@ class CreateUpdateProduct extends Component {
             })
         }else if (!nextProps.updateSuccess && nextProps.updateFailed){
             this.setState({
-                msgContent : 'Update failed',
+                msgContent : 'Update failed ' +nextProps.alertMessage,
                 msgShow : true,
                 msgType : 'danger'
             })
@@ -131,7 +131,7 @@ class CreateUpdateProduct extends Component {
             })
         }else if (!nextProps.createSuccess && nextProps.createFailed){
             this.setState({
-                msgContent : 'Create failed',
+                msgContent : 'Create failed ' +nextProps.alertMessage,
                 msgShow : true,
                 msgType : 'danger'
             })
@@ -430,8 +430,8 @@ class CreateUpdateProduct extends Component {
 const mapStateToProps = ({auth, productState, commonState}) => {
     const {authUser} = auth;
     const {filePath} = commonState;
-    const {product, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData} = productState
-    return {authUser, product, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, filePath}
+    const {product, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData, alertMessage} = productState
+    return {authUser, product, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, filePath, alertMessage}
 };
 
 export default connect(mapStateToProps, {viewProduct, updateProduct, createProduct, resetStatus, uploadImage, resetFilePath})(Form.create()(CreateUpdateProduct));

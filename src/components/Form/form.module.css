@@ -1,0 +1,57 @@
+.searchBox {
+    width: 376px; 
+    margin-left: 10px;
+}
+
+@media screen and (min-width: 1524px) {
+    .searchBox {
+        width: 376px;
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width: 1523px) {
+    .searchBox {
+        width: 376px;
+        margin-left: 0px;
+    }
+}
+
+.searchUsers {
+    width: 376px; 
+    margin-left: 10px;
+}
+
+@media screen and (min-width: 1524px) {
+    .searchUsers {
+        width: 376px;
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width: 856px) {
+    .searchUsers {
+        width: 376px;
+        margin-left: 0px;
+    }
+}
+
+.selectBox {
+    width: 376px; 
+    margin-left: 10px;
+}
+
+@media screen and (min-width: 1524px) {
+    .selectBox {
+        width: 376px;
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width: 856px) {
+    .selectBox {
+        width: 376px;
+        margin-left: 0px;
+        margin-bottom: 16px;
+    }
+}

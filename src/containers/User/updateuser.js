@@ -12,9 +12,16 @@ import {
 import {
     uploadImage,
     resetFilePath,
+    getListCountry,
     getListProvince,
     getListCity
 } from "appRedux/actions/Common";
+import {
+    searchRoles
+} from "appRedux/actions/Roles";
+import {
+    searchSubMerchant,
+} from "appRedux/actions/Merchant";
 import {Button, Card, Form, Input, InputNumber, Modal, Select, Switch, Upload, Icon, Radio, Col, message} from "antd";
 
 import update from "immutability-helper";
@@ -41,7 +48,11 @@ class UpdateUser extends Component {
 
         this.state = {
             data: [],
+            listProvince : [],
             listCity: [],
+            dataSourceRoles : [],
+            listRoles : [],
+            listSubMerchant:[],
             msgContent: '',
             msgType: '',
             msgShow: false,
@@ -56,17 +67,58 @@ class UpdateUser extends Component {
         let credential = this.props.authUser;
         credential.id = this.props.match.params.id;
         this.props.viewUser(credential);
+        //for Roles
+        this.props.searchRoles(credential);
+        //for sub merchant
+        this.props.searchSubMerchant(credential);
 
-        if (this.props.listProvince.length < 1) {
-            this.props.getListProvince();
+        if (this.props.listCountry.length < 1) {
+            this.props.getListCountry();
         }
     }
 
     componentWillReceiveProps(nextProps) {
+
+        if (nextProps.data !== this.props.data) {
+            this.setState({
+                data: nextProps.data
+            });
+        }
+
+        if (nextProps.listRoles !== this.props.listRoles) {
+            this.setState({
+                listRoles: nextProps.listRoles
+            })
+        }
+
+        if (nextProps.listSubMerchant !== this.props.listSubMerchant) {
+            this.setState({
+                listSubMerchant: nextProps.listSubMerchant
+            })
+        }
+
+        if (nextProps.listProvince !== this.props.listProvince) {
+            this.setState({
+                listProvince: nextProps.listProvince
+            })
+        }
+
         if (nextProps.listCity !== this.props.listCity) {
             this.setState({
                 listCity: nextProps.listCity
             })
+        }
+
+        if (nextProps.data !== undefined && nextProps.data != this.props.data && nextProps.data.address !== null) {
+            let request = {
+                id: nextProps.data.address.countryId
+            };
+            this.props.getListProvince(request);
+
+            this.setState({
+                data: nextProps.data,
+            });
+
         }
 
         if (nextProps.data !== undefined && nextProps.data != this.props.data && nextProps.data.address !== null) {
@@ -89,7 +141,7 @@ class UpdateUser extends Component {
             })
         } else if (!nextProps.updateSuccess && nextProps.updateFailed) {
             this.setState({
-                msgContent: 'Update failed',
+                msgContent: 'Update failed ' +nextProps.alertMessage,
                 msgShow: true,
                 msgType: 'danger'
             })
@@ -108,7 +160,7 @@ class UpdateUser extends Component {
                     line1: values.address,
                     line2: '',
                     line3: '',
-                    countryId: 'ID',
+                    countryId: values.countryId,
                     provinceId: values.stateProvinceId,
                     cityId: values.cityId,
                     postalCode: values.postalCode,
@@ -120,6 +172,8 @@ class UpdateUser extends Component {
                         email: values.email,
                         mobileNumber: values.mobileNumber,
                     };
+                
+                let roleIds = [values.id]
 
                 let formData = {
                     merchantName: values.merchantName,
@@ -130,6 +184,8 @@ class UpdateUser extends Component {
                     contactId: values.contactId,
                     address: address,
                     contact: contact,
+                    roleIds: roleIds,
+                    submerchantCode: values.merchantCode
                 };
 
                 let request = this.props.authUser;
@@ -163,6 +219,17 @@ class UpdateUser extends Component {
         }
     }
 
+    changeCountry(value) {
+        let request = {
+            id: value
+        };
+        this.props.getListProvince(request);
+
+        this.props.form.setFieldsValue({
+            stateProvinceId: ''
+        });
+    }
+
     changeProvince(value) {
         let request = {
             id: value
@@ -174,11 +241,18 @@ class UpdateUser extends Component {
         });
     }
 
+    changeRole(value) {
+        // console.log(value)
+    }
+
+    changeSubMerchant(value) {
+        // console.log(value)
+    }
 
     render() {
         const {getFieldDecorator} = this.props.form;
         let {loader, alertMessage, showMessage} = this.props;
-        const {data, msgShow, msgType, msgContent} = this.state;
+        const {data, msgShow, msgType, msgContent, listRoles, listSubMerchant} = this.state;
         var obj = JSON.parse(localStorage.getItem("userData"));
         var idUserForUpdate =  localStorage.getItem('idForUpdate');
         var loginName = '';
@@ -186,6 +260,7 @@ class UpdateUser extends Component {
         var description = '';
         var merchantName = '';
         var line1 = '';
+        var countryId = '';
         var stateProvId = '';
         var cityTown = '';
         var postalCode = '';
@@ -193,42 +268,63 @@ class UpdateUser extends Component {
         var contactLastName = '';
         var mobileNumber = '';
         var emailAddress = '';
+        var id = '';
         var code = '';
-        var codeName = '';
-                loginName = obj.data.loginName;
-                fullName = obj.data.fullName;
-                description = obj.data.description;
-                merchantName = obj.data.merchantName;
-                if(obj.data.address != null ){
-                    if (obj.data.address.line1 != null){
-                        line1 = obj.data.address.line1;
-                    }
-                    if (obj.data.address.stateProvId != null){
-                        stateProvId = obj.data.address.stateProvId;
+        var codeDescription = '';
+        var codeSubMerchant = '';
+        var nameSubMerchant = '';
+                loginName = data.loginName;
+                fullName = data.fullName;
+                description = data.description;
+                merchantName = data.merchantName;
+                if(data.address != null ){
+                    if (data.address.line1 != null){
+                        line1 = data.address.line1;
                     }
 
-                    if (obj.data.address.cityTown != null){
-                        cityTown = obj.data.address.cityTown;
+                    if (data.address.countryId != null){
+                        countryId = data.address.countryId;
                     }
-                    postalCode = obj.data.address.postalCode;
+
+                    if (data.address.stateProvId != null){
+                        stateProvId = data.address.stateProvId;
+                    }
+
+                    if (data.address.cityTown != null){
+                        cityTown = data.address.cityTown;
+                    }
+                    postalCode = data.address.postalCode;
                 }
 
 
-        if(obj.data.address != null ){
-            contactFirstName = obj.data.contact.contactFirstName;
-            contactLastName = obj.data.contact.contactLastName;
-            mobileNumber = obj.data.contact.mobileNumber;
-            emailAddress = obj.data.contact.emailAddress;
+        if(data.address != null ){
+            contactFirstName = data.contact.contactFirstName;
+            contactLastName = data.contact.contactLastName;
+            mobileNumber = data.contact.mobileNumber;
+            emailAddress = data.contact.emailAddress;
         }
 
-        if(obj.data.role != null) {
-            code = obj.data.role.code;
-            codeName = obj.data.role.name;
+        if(data.role != null) {
+            console.log(data.role)
+            id = data.role.id;
+            code = data.role.code;
+            codeDescription = data.role.description;
         }
 
+        if(data.subMerchant != null) {
+            codeSubMerchant = data.subMerchant.code;
+            nameSubMerchant = data.subMerchant.name;
+        }
 
+        let showSubMerchant = false
+        if(data.subMerchant === null){
+            showSubMerchant = true;
+        } else {
+            showSubMerchant = false;
+        }
 
         let address = {
+            countryId : '',
             addressId: '',
             line1: '',
             provinceId: '',
@@ -245,12 +341,40 @@ class UpdateUser extends Component {
             mobileNumber: '',
             email: ''
         };
+
+        let role = {
+            id : '',
+            code : '',
+            codeDescription : '',
+        }
+
+        let subMerchant = {
+            codeSubMerchant : '',
+            nameSubMerchant : ''
+        }
+
         if (data.contacts !== undefined) {
             contacts = data.contacts;
         }
 
+        if (data.role !== undefined) {
+            role = data.role;
+        }
+
+        if(data.subMerchant !== undefined){
+            subMerchant = data.subMerchant
+        }
+
+        let optionCountry = [];
+        this.props.listCountry.forEach((country, i) => {
+            let option =
+                <Option key={i} value={country.id}>{country.label}</Option>
+            ;
+            optionCountry.push(option);
+        });
+
         let optionProvince = [];
-        this.props.listProvince.forEach((province, i) => {
+        this.state.listProvince.forEach((province, i) => {
             let option =
                 <Option key={i} value={province.id}>{province.label}</Option>
             ;
@@ -267,6 +391,24 @@ class UpdateUser extends Component {
 
         if (data.address !== undefined) {
             address = data.address;
+        }
+
+        let optionsRoles = [];
+        listRoles.forEach((role, i) => {
+            let optionR =
+                <Option key={i} value={role.id}>{role.name}</Option>;
+            optionsRoles.push(optionR);
+        });
+
+        let optionsSubMerchant = [];
+        if(this.state.listSubMerchant !== null){
+            listSubMerchant.forEach((sub, i) => {
+                let optionR =
+                    <Option key={i} value={sub.code}>{sub.name}</Option>;
+                optionsSubMerchant.push(optionR);
+            });
+        } else {
+            optionsSubMerchant = []
         }
 
         return (
@@ -332,17 +474,28 @@ class UpdateUser extends Component {
                     </div>
 
                     <h5 className='gx-mb-3' style={{marginTop: '30px'}}>Address</h5>
-                    <div className='custom-box'>
+                    <div className='custom-box'> 
 
-                        <FormItem {...formItemLayout} label='Address'>
-                            {getFieldDecorator('address', {
+                        <FormItem {...formItemLayout} label='Country'>
+                            {getFieldDecorator('countryId', {
                                 // rules: [{
                                 //     required: true,
-                                //     message: 'Please input address'
+                                //     message: 'Please input province'
                                 // }],
-                                initialValue: line1
+                                initialValue: countryId
                             })(
-                                <Input placeholder='Address' disabled={true}/>
+                                <Select
+                                    onChange={this.changeCountry.bind(this)}
+                                    placeholder={
+                                        <div>
+                                            <div style={{display: 'inline-block'}}
+                                                className="icon icon-map-drawing"></div>
+                                            <span style={{marginLeft: '5px'}}>Country</span>
+                                        </div>
+                                    }
+                                    disabled={true} >
+                                    {optionCountry}
+                                </Select>
                             )}
                         </FormItem>
 
@@ -359,11 +512,11 @@ class UpdateUser extends Component {
                                     placeholder={
                                         <div>
                                             <div style={{display: 'inline-block'}}
-                                                 className="icon icon-map-drawing"></div>
+                                                className="icon icon-map-drawing"></div>
                                             <span style={{marginLeft: '5px'}}>Province</span>
                                         </div>
-                                    } disabled={true}
-                                >
+                                    }
+                                    disabled={true} >
                                     {optionProvince}
                                 </Select>
                             )}
@@ -382,10 +535,22 @@ class UpdateUser extends Component {
                                         <div style={{display: 'inline-block'}} className="icon icon-navigation"></div>
                                         <span style={{marginLeft: '5px'}}>City</span>
                                     </div>
-                                } disabled={true}
-                                >
+                                }
+                                disabled={true} >
                                     {optionCity}
                                 </Select>
+                            )}
+                        </FormItem>
+
+                        <FormItem {...formItemLayout} label='Address'>
+                            {getFieldDecorator('address', {
+                                // rules: [{
+                                //     required: true,
+                                //     message: 'Please input address'
+                                // }],
+                                initialValue: line1
+                            })(
+                                <Input placeholder='Address' disabled={true}/>
                             )}
                         </FormItem>
 
@@ -445,7 +610,7 @@ class UpdateUser extends Component {
 
                         <FormItem {...formItemLayout} label='Email'>
                             {getFieldDecorator('email', {
-                                rules: [{
+                            rules: [{
                                     required: false
                                 }],
                                 initialValue: emailAddress
@@ -460,26 +625,61 @@ class UpdateUser extends Component {
                     <h5 className='gx-mb-3' style={{marginTop: '30px'}}>Role </h5>
                     <div className='custom-box'>
                         <FormItem {...formItemLayout} label='Code'>
-                            {getFieldDecorator('firstName', {
-                                // rules: [{
-                                //     required: true,
-                                //     message: 'Please input first name'
-                                // }],
-                                initialValue: code
+                            {getFieldDecorator('id', {
+                                rules: [{
+                                    required: true,
+                                    message: 'Please Select the Role'
+                                }],
+                                initialValue: id 
                             })(
-                                <Input placeholder='Code' disabled={true}/>
+                                <Select
+                                    onChange={this.changeRole.bind(this)}
+                                    placeholder={
+                                        <div>
+                                            <div style={{display: 'inline-block'}}
+                                                className="icon icon-map-drawing"></div>
+                                        </div>
+                                    }
+                                >
+                                    {optionsRoles}
+                                </Select>
                             )}
                         </FormItem>
 
                         <FormItem {...formItemLayout} label='Code Name'>
-                            {getFieldDecorator('firstName', {
+                            {getFieldDecorator('codeDescription', {
                                 // rules: [{
                                 //     required: true,
                                 //     message: 'Please input first name'
                                 // }],
-                                initialValue: codeName
+                                initialValue: codeDescription
                             })(
                                 <Input placeholder='Role Name' disabled={true}/>
+                            )}
+                        </FormItem>
+                    </div>
+
+                    <h5 className='gx-mb-3' style={{marginTop: '30px'}} hidden={showSubMerchant}>Sub Merchant </h5>
+                    <div className='custom-box' hidden={showSubMerchant}>
+                        <FormItem {...formItemLayout} label='Merchant Name'>
+                            {getFieldDecorator('merchantCode', {
+                                // rules: [{
+                                //     required: true,
+                                //     message: 'Please Select 1 sub Merchant'
+                                // }],
+                                initialValue: codeSubMerchant 
+                            })(
+                                <Select
+                                    onChange={this.changeSubMerchant.bind(this)}
+                                    placeholder={
+                                        <div>
+                                            <div style={{display: 'inline-block'}}
+                                                className="icon icon-map-drawing"></div>
+                                        </div>
+                                    }
+                                >
+                                    {optionsSubMerchant}
+                                </Select>
                             )}
                         </FormItem>
                     </div>
@@ -500,9 +700,11 @@ class UpdateUser extends Component {
     }
 }
 
-const mapStateToProps = ({auth, userState, commonState}) => {
+const mapStateToProps = ({auth, userState, commonState, rolesState, merchantState}) => {
     const {authUser} = auth;
-    const {listProvince, listCity} = commonState;
+    const {listProvince, listCity, listCountry} = commonState;
+    const {listRoles} = rolesState;
+    const {listSubMerchant} = merchantState;
     const {data, updateSuccess, updateFailed, updateData, loader, alertMessage, showMessage} = userState;
     return {
         authUser,
@@ -510,11 +712,14 @@ const mapStateToProps = ({auth, userState, commonState}) => {
         updateSuccess,
         updateFailed,
         updateData,
+        listCountry,
         listProvince,
         listCity,
         loader,
         alertMessage,
-        showMessage
+        showMessage,
+        listRoles,
+        listSubMerchant
     }
 };
 
@@ -522,8 +727,11 @@ export default connect(mapStateToProps, {
     viewUser,
     updateUser,
     resetStatus,
+    getListCountry,
     getListProvince,
-    getListCity
+    getListCity,
+    searchRoles,
+    searchSubMerchant
 })(Form.create()(UpdateUser));
 
 

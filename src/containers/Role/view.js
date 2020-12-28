@@ -34,14 +34,12 @@ class ViewRoles extends Component {
         this.props.history.goBack();
     }
 
-
     render() {
 
         let content = [];
         let content2 = [];
         let titleView = '';
         let {loader, alertMessage, showMessage} = this.props;
-
 
         titleView = this.state.data.code;
 

@@ -1,6 +1,7 @@
 import {
     REGISTER_MERCHANT,
     VIEW_MERCHANT,
+    SEARCH_SUB_MERCHANT,
     UPDATE_MERCHANT,
     RESET_STATUS,
     VERIFICATION_MERCHANT,
@@ -23,6 +24,13 @@ export const registerMerchant = (request) => {
 export const viewMerchant = (request) => {
     return {
         type: VIEW_MERCHANT,
+        payload: request
+    };
+};
+
+export const searchSubMerchant = (request) => {
+    return {
+        type: SEARCH_SUB_MERCHANT,
         payload: request
     };
 };

@@ -1,7 +1,6 @@
 import Axios from 'axios';
 
-
-export const searchMembersApi = ({authToken, deviceId, userId, merchantId, page, sortBy, sort, search}) => {
+export const searchMembersApi = ({authToken, deviceId, userId, merchantId, page, sortBy, sort, search, searchUsername, searchMobileNumber}) => {
     if(authToken != null){
         return Axios({
             method: 'get',
@@ -9,9 +8,9 @@ export const searchMembersApi = ({authToken, deviceId, userId, merchantId, page,
             params: {
                 userId : userId,
                 merchantId : merchantId,
-                memberUsername : '',
                 memberName : search,
-                mobileNumber : '',
+                memberUsername : searchUsername,
+                mobileNumber : searchMobileNumber,
                 sortBy : sortBy,
                 sort: sort,
                 page : page,
@@ -68,6 +67,27 @@ export const changeStatusApi = ({authToken, deviceId, userId, merchantId, id, st
     };
 };
 
+export const approvalMemberApi = (data) => {
+    // console.log(memberIdList)
+
+    if (data.authToken != null) {
+        return Axios({
+            method: 'post',
+            url: window.ApiURL + data.api,
+            data: {
+                userId: data.userId,
+                merchantId: data.merchantId,
+                memberIdList: data.memberIdList
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'authToken': data.authToken,
+                'deviceUniqueId': data.deviceId
+            }
+        })
+    }
+}
+
 export const uploadMemberApi = ({authToken, deviceId, userId, merchantId, members}) => {
     if(authToken != null){
         return Axios({
@@ -77,6 +97,25 @@ export const uploadMemberApi = ({authToken, deviceId, userId, merchantId, member
                 userId : userId,
                 merchantId : merchantId,
                 members : members
+            },
+            headers:{
+                'Content-Type': 'application/json',
+                'authToken': authToken,
+                'deviceUniqueId' : deviceId
+            }
+        });
+    };
+};
+
+export const uploadTransactionApi = ({authToken, deviceId, userId, merchantId, requestList}) => {
+    if(authToken != null){
+        return Axios({
+            method: 'post',
+            url: window.ApiURL + 'promotion/posting/multiple',
+            data: {
+                userId : userId,
+                merchantId : merchantId,
+                requestList : requestList
             },
             headers:{
                 'Content-Type': 'application/json',

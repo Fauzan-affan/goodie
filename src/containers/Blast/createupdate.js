@@ -12,6 +12,8 @@ import {
     resetStatus
 } from "appRedux/actions/Blast";
 import {
+    Row,
+    Col,
     Button,
     Card,
     Form,
@@ -38,6 +40,10 @@ const Option = Select.Option;
 const formItemLayout = {
     labelCol: {xs: 24, sm: 6},
     wrapperCol: {xs: 24, sm: 14},
+};
+
+const formItemLayoutTable = {
+    wrapperCol: { offset: 6, span: 16 },
 };
 
 const formTailLayout = {
@@ -410,20 +416,29 @@ class CreateUpdateBlast extends Component {
         //     height: '30px',
         //     lineHeight: '30px',
         // };
+            let columns = [{
+                title: 'No',
+                dataIndex: 'no'
+            },{
+                title: 'Email',
+                dataIndex: 'emailAddress'
+            },{
+                title: ' Name Receiver',
+                dataIndex: 'nameReceiver'
+            }]
 
-        const columns = [{
-            title: 'No',
-            dataIndex: 'no'
-        },{
-            title: 'Mobile Number',
-            dataIndex: 'mobileNumber'
-        },{
-            title: 'Email',
-            dataIndex: 'emailAddress'
-        },{
-            title: ' Name Receiver',
-            dataIndex: 'nameReceiver'
-        }]
+        if (this.props.match.params.messageType === 'sms') {
+            columns = [{
+                title: 'No',
+                dataIndex: 'no'
+            },{
+                title: 'Mobile Number',
+                dataIndex: 'mobileNumber'
+            },{
+                title: ' Name Receiver',
+                dataIndex: 'nameReceiver'
+            }]
+        }
 
         //for upload member
         const dummyRequest = ({ file, onSuccess }) => {
@@ -437,9 +452,45 @@ class CreateUpdateBlast extends Component {
         return(
             <Card className="gx-card" title='Blast'>
 
-                <Form onSubmit={this.handleSubmit}>
+                    { 
+                        this.props.match.params.messageType === 'email' ?
+                            <FormItem {...formItemLayout} label='Message Type'>
+                                <form method="get" action={window.location.origin.toString()+"/uploadReceiversEmail.csv"}>
+                                    <Row>
+                                        {getFieldDecorator('messageType',{
+                                            initialValue: messageBlast.messageType,
+                                        })(
+                                            <Select style={{width: '70%', paddingLeft:'15px', paddingRight: '30px'}} disabled={true}>
+                                                {options}
+                                            </Select>
+                                        )}
+                                        <Button key="download" icon="download" htmlType="submit">
+                                            Sample for Email
+                                        </Button>
+                                    </Row>
+                                </form>
+                            </FormItem>
+                        : 
+                            <FormItem {...formItemLayout} label='Message Type'>
+                                <form method="get" action={window.location.origin.toString()+"/uploadReceiversSms.csv"}>
+                                    <Row>
+                                        {getFieldDecorator('messageType',{
+                                            initialValue: messageBlast.messageType,
+                                        })(
+                                            <Select style={{width: '70%', paddingLeft:'15px', paddingRight: '30px'}} disabled={true}>
+                                                {options}
+                                            </Select>
+                                        )}
+                                        <Button key="download" icon="download" htmlType="submit">
+                                            Sample for Sms
+                                        </Button>
+                                    </Row>
+                                </form>
+                            </FormItem>
+                    }
 
-                    <FormItem {...formItemLayout} label='Message type'>
+                <Form onSubmit={this.handleSubmit}>
+                    <FormItem {...formItemLayout} label='Message type' hidden>
                         {getFieldDecorator('messageType',{
                             initialValue: messageBlast.messageType,
                             rules: [{
@@ -471,10 +522,10 @@ class CreateUpdateBlast extends Component {
                                 required: true,
                                 message: 'Please input send date'
                             }],
-                            initialValue: messageBlast.sendDate ? moment(messageBlast.sendDate, 'YYYY-MM-DD HH:mm:ss') : ''
+                            initialValue: messageBlast.sendDate 
 
                         })(
-                            <DatePicker className="gx-mb-3 gx-w-100" showTime format="YYYY-MM-DD HH:mm:ss"/>
+                            <DatePicker className="gx-mb-3 gx-w-100" format="YYYY-MM-DD HH:mm:ss"/>
                         )}
                     </FormItem>
 
@@ -490,7 +541,7 @@ class CreateUpdateBlast extends Component {
                                 'type': 'text'
                             }}
                         />
-                        <span style={{color:'red'}}>* For SMS Maximum content 140 characters</span>
+                        {this.props.match.params.messageType === 'sms' ? <span style={{color:'red'}}>* For SMS Maximum content 140 characters</span> : <span style={{color:'red'}}>* For Email Maximum content 140 characters</span>}        
                     </FormItem>
 
                     <Form.Item {...formItemLayout} label="Receivers">
@@ -508,16 +559,17 @@ class CreateUpdateBlast extends Component {
                         )}
                     </Form.Item>
 
+                    <FormItem {...formItemLayoutTable} style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Table className="gx-table-responsive" pagination = {false} columns={columns} dataSource={memberData} style={{align:'center', paddingLeft:'80px'}}/>
+                    </FormItem>
 
-
-                    <Table className="gx-table-responsive" pagination = {false} columns={columns} dataSource={memberData}/>
-
-                    <FormItem {...formTailLayout}>
+                    <FormItem {...formTailLayout} >
                         <Button type="primary" htmlType="submit">Submit</Button>
                         <Button type="default" onClick={this.back} >Back</Button>
                     </FormItem>
 
                 </Form>
+
                 <SweetAlert success={msgType ==='success' ? true : false} danger={msgType ==='danger' ? true : false}
                             show={msgShow} title={msgContent} onConfirm={this.onConfirm}>
                 </SweetAlert>

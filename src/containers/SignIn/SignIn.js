@@ -1,12 +1,12 @@
 import React from "react";
-import {Button, Checkbox, Form, Icon, Input, message} from "antd";
+import {Button, Form, Input, message} from "antd";
 import {connect} from "react-redux";
-import {Link} from "react-router-dom";
 
 import {
     userSignIn,
     hideMessage
 } from "appRedux/actions/Auth";
+
 import IntlMessages from "util/IntlMessages";
 import CircularProgress from "components/CircularProgress/index";
 
@@ -56,11 +56,7 @@ class SignIn extends React.Component {
 
         if (nextProps.showMessage) {
             this.props.hideMessage();
-            // setTimeout(() => {
-            //     this.props.hideMessage();
-            // }, 100);
         }
-
     }
 
     render() {

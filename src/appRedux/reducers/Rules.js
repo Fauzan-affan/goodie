@@ -74,6 +74,11 @@ const INIT_STATE = {
         amountReq: 0,
         capPerTrx: 0
     },
+    recordInfo: {
+        totalRecords: 0,
+        page : 0,
+        nrecords : 0
+    },
     updateSuccess: false,
     updateFailed: false,
     updateData: {
@@ -89,7 +94,7 @@ const INIT_STATE = {
         ruleType : ''
     },
     deleteSuccess : false,
-    deleteFailed: false
+    deleteFailed: false,
 };
 
 
@@ -99,7 +104,8 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 loader: true,
-                showMessage: false
+                showMessage: false,
+                recordInfo: {}
             }
         }
 
@@ -175,7 +181,8 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 loader: false,
-                listRules: action.payload
+                listRules: action.payload.rule,
+                recordInfo: action.payload.recordInfo
             }
         }
 

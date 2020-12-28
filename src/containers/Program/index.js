@@ -1,7 +1,6 @@
 import React from "react";
 import {Card, Col, Row} from "antd";
 
-
 class Program extends React.Component{
     constructor(){
         super();

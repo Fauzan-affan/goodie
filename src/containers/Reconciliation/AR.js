@@ -203,7 +203,7 @@ class SearchReconciliationReceiveble extends Component {
     //     this.props.filterSortSearch( pagination, filters, sorter, period, startDate, endDate);
     // }
 
-    filterComponent(pagination, filters, sorter, trasactionType, merchantName, type, dateString){
+    filterComponent(pagination, filters, sorter, trasactionType, merchantName, type, dateString, dateEnd){
         const {period, startDate, endDate} = this.props.filterAndSort;
         
         let stDate = startDate;
@@ -232,7 +232,12 @@ class SearchReconciliationReceiveble extends Component {
                     filters =  {'pointTransactionType': null, 'merchantPayable' : null};
                 }
             }
-            // console.log(type, dateString)
+
+            if(type === 'periodDate'){
+                stDate = dateString
+                enDate = dateEnd
+            }
+
             if(type === 'startDate'){
                 stDate = dateString;
             }
@@ -421,8 +426,8 @@ class SearchReconciliationReceiveble extends Component {
             beginningEndDate:beginningEndDate,
             transactionType : '',
             listMerchantName : '',
-            isDead : true
-        })
+            isDead : true,
+        }, () => this.filterComponent())
         this.props.clearFilterSortSearch();
     }
 

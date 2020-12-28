@@ -240,12 +240,26 @@ class SidebarContent extends Component {
                 {/*    </Link>*/}
                 {/*</Menu.Item>*/}
 
-                {/*<Menu.Item key="report">*/}
-                {/*    <Link to="/report">*/}
-                {/*        <i className="icon icon-chart-line"/>*/}
-                {/*        <IntlMessages id="sidebar.report"/>*/}
-                {/*    </Link>*/}
-                {/*</Menu.Item>*/}
+                {/* <Menu.Item key="store">
+                    <Link to="/store">
+                        <i className="icon icon-timeline-with-icons"/>
+                        <IntlMessages id="Store"/>
+                    </Link>
+                </Menu.Item> */}
+
+                {/* <Menu.Item key="crud">
+                  <Link to="/crud">
+                      <i className="icon icon-tasks"/>
+                      <IntlMessages id="Crud"/>
+                  </Link>
+                </Menu.Item>
+
+                <Menu.Item key="crudcontent">
+                  <Link to="/crud_content">
+                      <i className="icon icon-tasks"/>
+                      <IntlMessages id="Crud Content"/>
+                  </Link>
+                </Menu.Item> */}
 
             </Menu>
           </CustomScrollbars>

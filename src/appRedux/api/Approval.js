@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 
-export const searchApprovalApi = ({authToken, deviceId, userId, merchantId, search, startDate, endDate, page, size, orderType}) => {
+export const searchApprovalApi = ({authToken, deviceId, userId, merchantId, search, merchantCode, memberName, mobileNumber,  startDate, endDate, page, size, orderType}) => {
     if(authToken != null){
         return Axios({
             method: 'get',
@@ -9,7 +9,10 @@ export const searchApprovalApi = ({authToken, deviceId, userId, merchantId, sear
             params: {
                 userId : userId,
                 merchantId : merchantId,
-                transactionName : search,
+                memberName : search,
+                merchantCode : merchantCode,
+                memberUsername : memberName,
+                mobileNumber : mobileNumber,
                 startDate : startDate,
                 endDate : endDate,
                 page : page,

@@ -12,7 +12,6 @@ import {
     ADD_STOCK
 } from "constants/ActionTypes";
 
-
 export const searchProducts = (request) => {
     return {
         type: SEARCH_PRODUCTS,

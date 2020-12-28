@@ -164,7 +164,7 @@
   "app.userAuth.or": "or",
   "app.userAuth.forgotPassword": "Forgot Password",
   "app.userAuth.changePassword": "Change Password",
-  "app.userAuth.forgot": "Don't worry. Recovering the password is easy.Just tell us the email you have registered and we'll send your new password.",
+  "app.userAuth.forgot": "Don't worry. Recovering the password is easy. Just tell us the email you have registered and we'll send your new password.",
   "app.userAuth.signUp": "Sign Up",
   "app.userAuth.getAccount": "Get an account !!!",
   "app.userAuth.resetPassword": "Reset Password",

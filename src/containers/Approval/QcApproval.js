@@ -95,9 +95,6 @@ class QualityControlApproval extends Component {
         credential.page = 0;
         this.props.viewApproval(credential);
 
-        console.log("this.state")
-        console.log(this.state)
-
         // let data = [];
         // data.methodApproval = MethodApproval.MethodApproval.ACCEPT.label;
         // this.setState({
@@ -329,7 +326,6 @@ class QualityControlApproval extends Component {
 
     handleCalculate = (e) => {
         // e.preventDefault();
-        // console.log(this.props.form.getFieldValue('customAmount'))
         this.setState({
             // spinnerPoint:true
             isCalculate:true
@@ -339,9 +335,6 @@ class QualityControlApproval extends Component {
         this.reqBody.totalAmount = this.props.form.getFieldValue('customAmount');
         this.reqBody.action = 'INQ';
         this.reqBody.status = 0;
-        // console.log(values.customAmount);
-
-        // console.log(reqBody);
         this.props.inqPostApproval(this.reqBody);
 
         // this.props.form.validateFields((err, values) => {
@@ -356,11 +349,6 @@ class QualityControlApproval extends Component {
         this.reqBody.totalAmount = totalAmount;
         this.reqBody.action = 'INQ';
         this.reqBody.status = 0;
-        // console.log("this.state.totalAmount = "+this.state.totalAmount)
-        // console.log("totalAmount = "+totalAmount)
-        // this.setState({
-        //
-        // })
 
         this.props.inqPostApproval(this.reqBody);
     }
@@ -391,16 +379,10 @@ class QualityControlApproval extends Component {
         //     }
         // });
 
-        console.log("data = "+JSON.stringify(this.props.dataInq))
-
         let totalPoint = '';
 
         if(this.props.data[0]){
             data = this.props.data[0];
-
-            // console.log("data.totalAmount = "+data.totalAmount)
-            // console.log("state.totalAmount = "+ this.state.totalAmount)
-            // console.log("point earned = "+this.state.pointEarned)
             if(this.state.pointEarned == null
                  && data.totalAmount == this.state.totalAmount
             ){
@@ -557,11 +539,11 @@ class QualityControlApproval extends Component {
 
                         {/*<Col lg={12} md={12} sm={24} xs={24}>*/}
 
-                            <FormItem {...formItemLayout} label='Transaction ID'>
+                            <FormItem {...formItemLayout} label='Receipt ID'>
                                 {getFieldDecorator('receiptId', {
                                     rules: [{
                                         required: true,
-                                        message: 'Please input transaction id'
+                                        message: 'Please input Receipt id'
                                     }],
                                     initialValue: data.receiptId
                                 })(

@@ -6,13 +6,16 @@ import {
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import {message,
+import {message, Tabs, Card,
     // Card, Col,
 } from "antd";
+import AmCharts from "@amcharts/amcharts3-react";
 import CircularProgress from "components/CircularProgress/index";
 // import SweetAlert from "react-bootstrap-sweetalert";
 import moment from 'moment';
 import {CSVLink} from "react-csv";
+
+const { TabPane } = Tabs;
 
 class MemberBalanceReport extends Component {
     csvLink = React.createRef();
@@ -193,6 +196,32 @@ class MemberBalanceReport extends Component {
                 res.name = res.memberName;
             });
         }
+        
+        // sum points for graph chart
+        function getData() {
+            let listData = [];
+
+            for (let i = 0; i < result.length; i++) {
+              let total = 0;
+                for (let j = 0; j < result.length; j++) {
+                    if (result[i].tierName === result[j].tierName) {
+                        total += result[j].point;
+                    }
+                }
+          
+                listData.push({
+                    tierName: result[i].tierName,
+                    total
+                });
+            }
+            return listData;
+        }
+        // remove dupicates data for graph chart
+        const data = [...getData().reduce( (item, o) => {
+            if (!item.has(o.tierName)) item.set(o.tierName, { ...o, value : 0 });
+            item.get(o.tierName).value++;
+            return item
+        }, new Map).values()];
 
         let filterParam = {
             search : search,
@@ -215,8 +244,65 @@ class MemberBalanceReport extends Component {
             dataIndex: 'point',
             label: 'Point',
             key: 'point',
+        }];
+
+        const config = {
+            "type": "serial",
+            "categoryField": "tierName",
+            "startDuration": 1,
+            "export": {
+                "enabled": true
+            },
+            "categoryAxis": {
+                "gridPosition": "start"
+            },
+            "chartCursor": {
+                "enabled": true
+            },
+            "trendLines": [],
+            "graphs": [
+                {
+                    "balloonText": "[[tierName]] points :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-1",
+                    "markerType": "square",
+                    "title": "Total Points",
+                    "type": "smoothedLine",
+                    "valueField": "total"
+                },
+                {
+                    "balloonText": "[[title]] of [[tierName]] :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-2",
+                    "markerType": "square",
+                    "title": "value",
+                    "type": "smoothedLine",
+                    "valueField": "value"
+                }
+            ],
+            "guides": [],
+            "valueAxes": [
+                {
+                    "id": "ValueAxis-1",
+                    // "title": "Axis title"
+                }
+            ],
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "position":"left",
+                "enabled": true,
+                "useGraphSettings": true
+            },
+            "titles": [
+                {
+                    "id": "Title-1",
+                    "size": 15,
+                    "text": "Chart Report Member Balance"
+                }
+            ],
+            "dataProvider": data
         }
-        ];
 
         return(
             <div>
@@ -224,25 +310,38 @@ class MemberBalanceReport extends Component {
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
-                    <SearchForm
-                        columns={columns}
-                        listData={result}
-                        title='Member Balance Report'
-                        placeholder='Search members by name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadData = {downloadData}
-                        filterParam = {filterParam}
-                    />
-                    : ''
-                }
+                <Card>
+                    <Tabs defaultActiveKey="1" centered>
+                        <TabPane tab="Chart Report" key="1">
+                            <Card className="gx-card"  title="">
+                                <div className="App">
+                                    <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                </div>
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Table Report" key="2">
+                            {loader === false ?
+                                <SearchForm
+                                    columns={columns}
+                                    listData={result}
+                                    title='Member Balance Report'
+                                    placeholder='Search members by name'
+                                    onFilter={this.filterComponent.bind(this)}
+                                    onClearFilter={this.clearFilterComponent.bind(this)}
+                                    recordInfo = {recordInfo}
+                                    onSearch = {this.handleSearch.bind(this)}
+                                    enableDateFilter = {true}
+                                    onFilterDate = {this.handleFilterDate.bind(this)}
+                                    enableDownload = {true}
+                                    onDownload = {this.handleDownload.bind(this)}
+                                    downloadData = {downloadData}
+                                    filterParam = {filterParam}
+                                />
+                                : ''
+                            }
+                        </TabPane>
+                    </Tabs>
+                </Card>
 
                 <CSVLink
                     data={downloadData} headers={columns}

@@ -45,7 +45,7 @@ class Tier extends React.Component{
                     <Card>
                         <div>
                             {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
-                            {showMessage ? message.error(alertMessage.toString()) : null}
+                            {/* {showMessage ? message.error(alertMessage.toString()) : null} */}
                         </div>
                         {loader === false && showCreate > 0 ?
                         <div className="gx-price-tables gx-pt-default">
@@ -53,7 +53,7 @@ class Tier extends React.Component{
                                 <Col xl={12} lg={24} md={12} xs={24} className='custom-center'>
                                     <div className='gx-package custom-package' onClick={this.searchTier} >
                                         <img src={require('assets/images/Member/search.png')}
-                                             alt="Avatar"></img>
+                                            alt="Avatar"></img>
                                         <div className='gx-package-header custom-package-header custom-tier-big gx-text-white'>
                                             <h2 className="gx-price custom-menu-header"><i className="icon icon-halfstar"/>Tier Administration</h2>
                                             <p className="custom-menu-body gx-mb-0 custom-package-body">
@@ -65,7 +65,7 @@ class Tier extends React.Component{
 
                             </Row>
                         </div>
-                            : ''}
+                            : ''} 
 
                         {loader === false && showCreate < 1 ?
                             <div className="gx-price-tables gx-pt-default">
@@ -73,7 +73,7 @@ class Tier extends React.Component{
                                     <Col xl={12} lg={24} md={12} xs={24} className='custom-center'>
                                         <div className='gx-package custom-package' onClick={this.insertTier} >
                                             <img src={require('assets/images/Member/create.png')}
-                                                 alt="Avatar"></img>
+                                                alt="Avatar"></img>
                                             <div className='gx-package-header custom-package-header custom-tier-small gx-text-white'>
                                                 <h2 className="gx-price custom-menu-header"><i className="icon icon-halfstar"/>Create Tier</h2>
                                                 <p className="custom-menu-body gx-mb-0 custom-package-body">

@@ -1,18 +1,22 @@
 import React, {Component} from "react";
 import SearchForm from '../../components/Form/search';
 import {connect} from "react-redux";
+import AmCharts from "@amcharts/amcharts3-react";
 import {
     voucherBalanceReport,
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import {message,
+import {message, Tabs, Card,
     // Card, Col
 } from "antd";
 import CircularProgress from "components/CircularProgress/index";
 // import SweetAlert from "react-bootstrap-sweetalert";
 import moment from 'moment';
 import {CSVLink} from "react-csv";
+import BreadcrumbSeparator from "antd/lib/breadcrumb/BreadcrumbSeparator";
+
+const { TabPane } = Tabs;
 
 class VoucherBalanceReport extends Component {
     csvLink = React.createRef();
@@ -54,7 +58,7 @@ class VoucherBalanceReport extends Component {
         credential.endDate = '';
         credential.trxType = -1;
         credential.productName = '';
-        credential.pageSize = 20;
+        credential.pageSize = 10;
         credential.isDownload = isDownload;
 
         if(isDownload === false){
@@ -169,7 +173,7 @@ class VoucherBalanceReport extends Component {
 
         let newCustomFilter = {
             status : status,
-            productName : customFilter.productName
+            // productName : customFilter.productName
         }
 
 
@@ -189,7 +193,7 @@ class VoucherBalanceReport extends Component {
         })
 
         let newCustomFilter = {
-            status : customFilter.status,
+            // status : customFilter.status,
             productName : productName
         }
 
@@ -253,6 +257,17 @@ class VoucherBalanceReport extends Component {
             });
         }
 
+        const data = [...result.reduce( (item, o) => {
+            if (!item.has(o.productName)) item.set(o.productName, { ...o, Active:0, Redeem: 0, Expired: 0});
+            if(o.status == 'Active')
+            item.get(o.productName).Active++
+            if(o.status == 'Redeemed')
+            item.get(o.productName).Redeem++
+            if(o.status == 'Expired')
+            item.get(o.productName).Expired++
+            return item;
+        }, new Map).values()];
+
         let filterParam = {
             search : search,
             endDate : endDate,
@@ -294,35 +309,115 @@ class VoucherBalanceReport extends Component {
         }
         ];
 
+        const config = {
+            "type": "serial",
+            "categoryField": "productName",
+            "startDuration": 1,
+            "export": {
+                "enabled": true
+            },
+            "categoryAxis": {
+                "gridPosition": "start"
+            },
+            "chartCursor": {
+                "enabled": true
+            },
+            "trendLines": [],
+            "graphs": [
+                {
+                    "balloonText": "[[productName]] of [[title]] :[[value]]",
+                    "bullet": "round",
+                    "id": "AmGraph-1",
+                    "markerType": "square",
+                    "title": "Active",
+                    "type": "smoothedLine",
+                    "valueField": "Active"
+                },
+                {
+                    "balloonText": "[[productName]] of [[title]] :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-2",
+                    "markerType": "square",
+                    "title": "Redeem",
+                    "type": "smoothedLine",
+                    "valueField": "Redeem"
+                },
+                {
+                    "balloonText": "[[productName]] of [[title]] :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-3",
+                    "markerType": "square",
+                    "title": "Expired",
+                    "type": "smoothedLine",
+                    "valueField": "Expired"
+                }
+            ],
+            "guides": [],
+            "valueAxes": [
+                {
+                    "id": "ValueAxis-1",
+                    // "title": "Axis title",
+                }
+            ],
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "position":"left",
+                "enabled": true,
+                "useGraphSettings": true
+            },
+            "titles": [
+                {
+                    "id": "Title-1",
+                    "size": 15,
+                    "text": "Chart Report Voucher Balance"
+                }
+            ],
+            "dataProvider": data
+        }
+
         return(
             <div>
                 <div>
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
-                    <SearchForm
-                        columns={columns}
-                        listData={result}
-                        title='Voucher Balance Report'
-                        placeholder='Search members by name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        enableProductNameFilter = {true}
-                        onFilterProductName = {this.handleFilterStatus.bind(this)}
-                        enableStatusFilter = {true}
-                        onFilterStatus = {this.handleFilterProductName.bind(this)}
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadData = {downloadData}
-                        filterParam = {filterParam}
-                    />
-                    : ''
-                }
+                <Card>
+                    <Tabs defaultActiveKey="1" centered>
+                        <TabPane tab="Chart Report" key="1">
+                            <Card className="gx-card"  title="">
+                                <div className="App">
+                                    <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                </div>
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Table Report" key="2">
+                            {loader === false ?
+                                <SearchForm
+                                    columns={columns}
+                                    listData={result}
+                                    title='Voucher Balance Report'
+                                    placeholder='Search members by name'
+                                    onFilter={this.filterComponent.bind(this)}
+                                    onClearFilter={this.clearFilterComponent.bind(this)}
+                                    recordInfo = {recordInfo}
+                                    onSearch = {this.handleSearch.bind(this)}
+                                    enableDateFilter = {true}
+                                    onFilterDate = {this.handleFilterDate.bind(this)}
+                                    enableProductNameFilter = {true}
+                                    onFilterProductName = {this.handleFilterProductName.bind(this)}
+                                    enableStatusFilter = {true}
+                                    onFilterStatus = {this.handleFilterStatus.bind(this)}
+                                    enableDownload = {true}
+                                    onDownload = {this.handleDownload.bind(this)}
+                                    downloadData = {downloadData}
+                                    filterParam = {filterParam}
+                                />
+                                : ''
+                            }
+                        </TabPane>
+                    </Tabs>
+                </Card>
 
                 <CSVLink
                     data={downloadData} headers={columns}

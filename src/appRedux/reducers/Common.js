@@ -5,6 +5,8 @@ import {
     ON_HIDE_LOADER,
     UPLOAD_IMAGE_SUCCESS,
     UPLOAD_IMAGE_FAILED,
+    GET_LIST_COUNTRY_SUCCESS,
+    GET_LIST_COUNTRY_FAILED,
     GET_LIST_PROVINCE_SUCCESS,
     GET_LIST_PROVINCE_FAILED,
     GET_LIST_CITY_SUCCESS,
@@ -23,6 +25,7 @@ const INIT_STATE = {
     showMessage: false,
     initURL: '',
     filePath: '',
+    listCountry: [],
     listProvince: [],
     listCity: [],
     listCurrency: [],
@@ -72,6 +75,20 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 filePath: ''
+            }
+        }
+
+        case GET_LIST_COUNTRY_SUCCESS: {
+            return {
+                ...state,
+                listCountry: action.payload
+            }
+        }
+
+        case GET_LIST_COUNTRY_FAILED: {
+            return {
+                ...state,
+                listCountry: []
             }
         }
 

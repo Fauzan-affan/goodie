@@ -352,5 +352,3 @@ const mapStateToProps = ({auth, approvalState}) => {
     return {authUser, listApproval, recordInfo, filterAndSort, loader, alertMessage, showMessage}
 };
 export default connect(mapStateToProps, {searchApproval, filterSortSearch, clearFilterSortSearch, resetStatus})(SearchApproval);
-
-

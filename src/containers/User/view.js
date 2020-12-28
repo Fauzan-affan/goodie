@@ -39,10 +39,9 @@ class ViewUser extends Component {
 
         let content1 = [];
         let content2 = [];
+        let content3 = [];
         let titleView = '';
         let {loader, alertMessage, showMessage} = this.props;
-
-
         titleView = this.state.data.id;
 
         //set key
@@ -55,6 +54,12 @@ class ViewUser extends Component {
         // }
         if (this.state.data.role != null) {
             details.push(this.state.data.role);
+        }
+
+        let subMerchant = [];
+
+        if (this.state.data.subMerchant != null) {
+            subMerchant.push(this.state.data.subMerchant);
         }
 
 
@@ -103,6 +108,12 @@ class ViewUser extends Component {
                     type : 'text'
                 },
                 {
+                    key : 'country',
+                    label : 'Country',
+                    value : this.state.data.address.countryId,
+                    type : 'text'
+                },
+                {
                     key : 'stateProvId',
                     label : 'Province ID',
                     value : this.state.data.address.stateProvId,
@@ -137,31 +148,42 @@ class ViewUser extends Component {
                     label : 'Email',
                     value : this.state.data.contact.emailAddress,
                     type : 'text'
-                },
+                },{
+                    key : 'role',
+                    label: 'Role Details',
+                    listData : details,
+                    type : 'list without pgnation',
+                    columns : [{
+                        title: 'Role Code',
+                        dataIndex: 'code',
+                        key: 'code',
+                    }, {
+                        title: 'Role Name',
+                        dataIndex: 'name',
+                        key: 'name',
+                    }, {
+                        title: 'Role Description',
+                        dataIndex: 'description',
+                        key: 'description',
+                    }]
+                },{
+                    key : 'subMerchant',
+                    label: 'Sub Merchant',
+                    listData : subMerchant,
+                    type : 'list without pgnation',
+                    columns : [{
+                        title: 'Merchant Code',
+                        dataIndex: 'code',
+                        key: 'code',
+                    }, {
+                        title: 'Merchant Name',
+                        dataIndex: 'name',
+                        key: 'name',
+                    }]
+                }
             ];
 
-        content2 = [{
-            key : 'role',
-            label: 'Role Details',
-            listData : details,
-            type : 'list partial',
-            columns : [{
-                title: 'Role Code',
-                dataIndex: 'code',
-                key: 'code',
-            }, {
-                title: 'Role Name',
-                dataIndex: 'name',
-                key: 'name',
-            }, {
-                title: 'Role Description',
-                dataIndex: 'description',
-                key: 'description',
-            }]
-        }
-        ];
-
-    Array.prototype.push.apply(content1, content2);
+    Array.prototype.push.apply(content1);
 
         return(
             <div>

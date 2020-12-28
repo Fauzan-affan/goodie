@@ -14,7 +14,6 @@ import MemberGrowth from "./Member/growth";
 import TierMember from "./Member/tier";
 import TotalLoyalty from "./Loyalty/total";
 
-
 const CRM = () => {
     return (
         <Auxiliary>
@@ -27,7 +26,6 @@ const CRM = () => {
                     <RewardDashboard/>
                 </Col>
                 <TotalLoyalty/>
-
 
                 <Col xl={8} lg={8} md={24} sm={24} xs={24}>
                     <Row>
@@ -46,7 +44,6 @@ const CRM = () => {
                 <Col xl={8} lg={8} md={12} sm={24} xs={24}>
                     <TopMerchants/>
                 </Col>
-
 
                 {/* <Col xl={24} lg={24} md={24} sm={24} xs={24}>
                     <BillingDashboard/>

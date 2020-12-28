@@ -23,6 +23,9 @@ import gamificationSagas from "./Gamification";
 import gamificationCreateUpdateSagas from "./GamificationCreateUpdate";
 import approvalSagas from "./Approval";
 import reconciliationSagas from "./Reconciliation";
+import storeSagas from "./Store";
+// import crudSagas from "./Crud";
+// import crudContentSagas from "./CrudContent";
 
 export default function* rootSaga(getState) {
     yield all([
@@ -50,5 +53,8 @@ export default function* rootSaga(getState) {
         gamificationCreateUpdateSagas(),
         approvalSagas(),
         reconciliationSagas(),
+        storeSagas(),
+        // crudSagas(),
+        // crudContentSagas(),
     ]);
 }

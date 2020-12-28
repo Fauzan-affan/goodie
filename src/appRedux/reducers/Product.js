@@ -209,7 +209,7 @@ export default (state = INIT_STATE, action) => {
                 loader: false,
                 updateSuccess : true,
                 updateFailed: false,
-                updateData: action.payload
+                updateData: action.payload,
             }
         }
 
@@ -218,6 +218,7 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 loader: false,
                 updateSuccess : false,
+                alertMessage: action.payload,
                 updateFailed: true,
                 updateData: {
                     productId : '',
@@ -241,6 +242,7 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 loader: false,
+                alertMessage: action.payload,
                 createSuccess : false,
                 createFailed : true,
                 createData: {

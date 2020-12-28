@@ -16,7 +16,9 @@ class BalanceHistory extends Component {
   state = {
     startDate: null,
     endDate: null,
-    dateMoment: [null, null]
+    dateMoment: [null, null],
+    filteredInfo: null,
+    sortedInfo: null,
   }
 
   onDateChange = (date, dateString) => {
@@ -31,47 +33,18 @@ class BalanceHistory extends Component {
     this.setState({
       startDate: null,
       endDate: null,
-      dateMoment: [null, null]
+      dateMoment: [null, null],
+      filteredInfo: null,
+      sortedInfo: null,
     })
   }
 
-  columns = [
-    {
-      title: 'No',
-      dataIndex: 'no',
-      key: 'no',
-    },
-    {
-      title: 'Posting Date',
-      dataIndex: 'paymentDate',
-      key: 'paymentDate',
-    },
-    {
-      title: 'Order Number',
-      dataIndex: 'transactionNumber',
-      key: 'transactionNumber',
-    },
-    {
-      title: 'Market Place',
-      dataIndex: 'marketPlace',
-      key: 'marketPlace',
-    },
-    {
-      title: 'Entry Type',
-      dataIndex: 'paymentMethod',
-      key: 'paymentMethod',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-  ]
-
-  csvHeader = this.columns.map(col => ({
-    label: col.title,
-    key: col.key
-  }));
+  handleChange = (pagination, filters, sorter) => {
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    });
+  };
 
   render(){
     const { startDate, endDate, dateMoment } = this.state;
@@ -80,6 +53,61 @@ class BalanceHistory extends Component {
         .filter(item => moment(item.paymentDate).isBetween(startDate, endDate, null, '[]')) : 
       this.props.balanceHistory.map(mapBalanceToData);
     const { loader, error, showMessage } = this.props;
+    let { sortedInfo, filteredInfo } = this.state;
+    sortedInfo = sortedInfo || {};
+    filteredInfo = filteredInfo || {};
+
+    let columns = [
+      {
+        title: 'No',
+        dataIndex: 'no',
+        key: 'no',
+      },
+      {
+        title: 'Date',
+        dataIndex: 'paymentDate',
+        key: 'paymentDate',
+      },
+      {
+        title: 'Order Number',
+        dataIndex: 'transactionNumber',
+        key: 'transactionNumber',
+      },
+      {
+        title: 'Market Place',
+        dataIndex: 'marketPlace',
+        key: 'marketPlace',
+      },
+      // {
+      //   title: 'Entry Type',
+      //   dataIndex: 'paymentMethod',
+      //   key: 'paymentMethod',
+      // },
+      {
+        title: 'Transaction Type',
+        dataIndex: 'transactionType',
+        key: 'transactionType',
+        filters: [
+          { text: "Point Fee", value: "Point Fee" },
+          { text: "Redeem Reward", value: "Redeem Reward" },
+          { text: "Top-up", value: "Top-up" },
+        ],
+        filteredValue: filteredInfo.transactionType || null,
+        onFilter: (value, record) => record.transactionType.includes(value),
+        // sorter: (a, b) => a.transactionType.length - b.transactionType.length,
+        // sortOrder: sortedInfo.columnKey === "transactionType" && sortedInfo.order,
+      },
+      {
+        title: 'Amount',
+        dataIndex: 'amount',
+        key: 'amount',
+      },
+    ]
+
+    let csvHeader = columns.map(col => ({
+      label: col.title,
+      key: col.key
+    }));
 
     if (loader) {
       return (<div className="gx-loader-view"><CircularProgress/></div>)
@@ -104,7 +132,7 @@ class BalanceHistory extends Component {
             >
               <CSVLink 
                 data={data} 
-                headers={this.csvHeader}
+                headers={csvHeader}
                 filename={"Deposit Report.csv"}
               >
                 <span className="csv-download-text">Download</span>
@@ -115,8 +143,9 @@ class BalanceHistory extends Component {
             <Button onClick={this.clearFilter}>Clear filters and sorters</Button>
           </div>
           <Table 
-            columns={this.columns} 
+            columns={columns} 
             dataSource={data}
+            onChange={this.handleChange}
           />
         </Card>
       </div>
@@ -136,14 +165,15 @@ const mapStateToProps = ({ depositState, auth }) => {
     }
   }
 }
-
+// typeof item.paymentDate === 'string' ? item.paymentDate.split(' ')[0] : ''
 const mapBalanceToData = (item, index) => ({
   no: index + 1,
-  paymentDate: typeof item.paymentDate === 'string' ? item.paymentDate.split(' ')[0] : '',
+  paymentDate: moment(item.paymentDate).format("YYYY-MM-DD HH:mm:ss"),
   transactionNumber: item.transactionNumber,
   marketPlace: 'PT Goodie',
   paymentMethod: item.paymentMethod || 'Top-Up',
-  amount: item.amount,
+  transactionType: item.transactionType,
+  amount: `Rp. ${new Intl.NumberFormat('ID').format(item.amount)}`,
 });
 
 export default connect(mapStateToProps, { getDepositBalanceHistory })(BalanceHistory);

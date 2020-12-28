@@ -103,7 +103,7 @@ class UserForgotPassword extends React.Component {
         const {loader} = this.props;
 
         return (
-            <div className="gx-app-login-wrap custom-background">
+            <div className="gx-app-login-wrap">
                 <div className="gx-login-container">
 
                     <div className="gx-login-content">

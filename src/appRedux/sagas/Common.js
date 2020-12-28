@@ -4,6 +4,9 @@ import {
     UPLOAD_IMAGE_SUCCESS,
     UPLOAD_IMAGE_FAILED,
     BACK_TO_LOGIN,
+    GET_LIST_COUNTRY,
+    GET_LIST_COUNTRY_SUCCESS,
+    GET_LIST_COUNTRY_FAILED,
     GET_LIST_PROVINCE,
     GET_LIST_PROVINCE_SUCCESS,
     GET_LIST_PROVINCE_FAILED,
@@ -11,7 +14,7 @@ import {
     GET_LIST_CITY_SUCCESS,
     GET_LIST_CITY_FAILED
 } from "constants/ActionTypes";
-import {uploadImageApi,getListCityApi,getListProvinceApi,getListCurrencyApi} from "../../appRedux/api/Common";
+import {uploadImageApi,getListCityApi,getListProvinceApi,getListCurrencyApi, getListCountryApi} from "../../appRedux/api/Common";
 import { GET_LIST_CURRENCY, GET_LIST_CURRENCY_SUCCESS, GET_LIST_CURRENCY_FAILED } from "../../constants/ActionTypes";
 
 function* uploadImageProcess({payload}) {
@@ -70,9 +73,37 @@ function* fetchListCurrency() {
     }
 }
 
-function* fetchListProvince() {
+function* fetchListCountry() {
     try {
-        const listProvince = yield call(getListProvinceApi);
+        const listCountry = yield call(getListCountryApi);
+        if (listCountry.data.abstractResponse.responseStatus === 'INQ000') {
+            yield put({type: GET_LIST_COUNTRY_SUCCESS, payload: listCountry.data.utilMessageResponse});
+        } else {
+            yield put({type: GET_LIST_COUNTRY_FAILED, payload: listCountry.data.abstractResponse.responseMessage});
+        }
+    } catch (error) {
+        if(error.response !== undefined) {
+            if (error.response.data.abstractResponse.responseStatus === 'AUTH001') {
+                yield put({type: BACK_TO_LOGIN, payload: error.response.data.abstractResponse.responseMessage});
+            } else {
+                yield put({
+                    type: GET_LIST_COUNTRY_FAILED,
+                    payload: error.response.data.abstractResponse.responseMessage
+                });
+            }
+        }else{
+            yield put({
+                type: GET_LIST_COUNTRY_FAILED,
+                payload: 'Sorry, this feature is not accessible at this time.'
+            });
+        }
+        // yield put({type: GET_LIST_PROVINCE_FAILED, payload: error.data.abstractResponse.responseMessage});
+    }
+}
+
+function* fetchListProvince({payload}) {
+    try {
+        const listProvince = yield call(getListProvinceApi, payload);
         if (listProvince.data.abstractResponse.responseStatus === 'INQ000') {
             yield put({type: GET_LIST_PROVINCE_SUCCESS, payload: listProvince.data.utilMessageResponse});
         } else {
@@ -132,6 +163,10 @@ export function* uploadImage() {
     yield takeEvery(UPLOAD_IMAGE, uploadImageProcess);
 }
 
+export function* getListCountry() {
+    yield takeEvery(GET_LIST_COUNTRY, fetchListCountry);
+}
+
 export function* getListProvince() {
     yield takeEvery(GET_LIST_PROVINCE, fetchListProvince);
 }
@@ -147,6 +182,7 @@ export function* getListCurrency() {
 export default function* rootSaga() {
     yield all([
         fork(uploadImage),
+        fork(getListCountry),
         fork(getListProvince),
         fork(getListCity),
         fork(getListCurrency),

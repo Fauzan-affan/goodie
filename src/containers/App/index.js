@@ -2,13 +2,14 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import URLSearchParams from 'url-search-params'
 import {Redirect, Route, Switch} from "react-router-dom";
-import {LocaleProvider} from "antd";
+import {ConfigProvider } from "antd";
 import {IntlProvider} from "react-intl";
 
 import AppLocale from "lngProvider";
 import MainApp from "./MainApp";
-import SignIn from "../SignIn";
+import SignIn from "../../containers/SignIn/NewSignIn.js";
 import SignUp from "../SignUp";
+import CustomContent from "../CustomContent/customcontent";
 import MerchantVerification from "../Merchant/verification";
 import UserForgotPassword from "../User/forgotpassword";
 import UserResetPassword from "../User/resetpassword"
@@ -147,7 +148,7 @@ class App extends Component {
 
         const currentAppLocale = AppLocale[locale.locale];
         return (
-            <LocaleProvider locale={currentAppLocale.antd}>
+            <ConfigProvider  locale={currentAppLocale.antd}>
                 <IntlProvider
                     locale={currentAppLocale.locale}
                     messages={currentAppLocale.messages}
@@ -157,6 +158,7 @@ class App extends Component {
                     <Switch>
                         <Route exact path='/signin' component={SignIn}/>
                         <Route exact path='/signup' component={SignUp}/>
+                        <Route exact path='/custom_content' component={CustomContent}/>
                         <Route exact path='/merchant/verification/:merchantId/:userId/:code' component={MerchantVerification}/>
                         <Route exact path='/user/forgot-password' component={UserForgotPassword}/>
                         <Route exact path='/user/reset-password/:userId/:merchantId/:code' component={UserResetPassword}/>
@@ -165,7 +167,7 @@ class App extends Component {
                                          component={MainApp}/>
                     </Switch>
                 </IntlProvider>
-            </LocaleProvider>
+            </ConfigProvider >
         )
     }
 }

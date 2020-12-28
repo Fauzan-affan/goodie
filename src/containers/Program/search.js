@@ -167,6 +167,7 @@ class SearchPrograms extends Component {
                                 onCancel={this.onCancelDelete.bind(this)}
                     />
                 </div>
+                {console.log(this.props.listPrograms)}
                 {loader === false ?
                     <SearchForm
                         columns={columns}
@@ -186,8 +187,6 @@ class SearchPrograms extends Component {
         );
 
     }
-
-
 }
 
 const mapStateToProps = ({auth, programState}) => {
@@ -195,6 +194,6 @@ const mapStateToProps = ({auth, programState}) => {
     const {listPrograms, filterAndSort, loader, alertMessage, showMessage, deleteSuccess, deleteFailed} = programState
     return {authUser, listPrograms, filterAndSort, loader, alertMessage, showMessage, deleteSuccess, deleteFailed}
 };
-export default connect(mapStateToProps, {searchPrograms, filterSortSearch, clearFilterSortSearch,deleteProgram,resetStatus})(SearchPrograms);
+export default connect(mapStateToProps, {searchPrograms, filterSortSearch, clearFilterSortSearch, deleteProgram, resetStatus})(SearchPrograms);
 
 

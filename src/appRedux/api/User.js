@@ -64,7 +64,8 @@ export const createUserApi = ({authToken, deviceId, merchantId, userId, data}) =
                 contact: data.contact,
                 userNonLocked: '-1',
                 userEnabled: '-1',
-                roleIds: data.roleIds
+                roleIds: data.roleIds,
+                submerchantCode: data.submerchantCode,
             },
             headers:{
                 'Content-Type': 'application/json',
@@ -77,7 +78,6 @@ export const createUserApi = ({authToken, deviceId, merchantId, userId, data}) =
 
 export const updateUserApi = ({authToken, deviceId, merchantId, userId, id, data}) => {
     if(authToken != null){
-
         return Axios({
             method: 'put',
             url: window.ApiURL + 'v2/users/' +id +'/update',
@@ -91,6 +91,8 @@ export const updateUserApi = ({authToken, deviceId, merchantId, userId, id, data
                 contactId: data.contactId,
                 address: data.address,
                 contact: data.contact,
+                roleIds:data.roleIds,
+                submerchantCode: data.submerchantCode,
             },
             headers:{
                 'Content-Type': 'application/json',

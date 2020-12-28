@@ -38,7 +38,7 @@ export function* fetchSearchRules({payload}) {
         try {
             const searchRulesData = yield call(searchRulesApi, payload);
             if (searchRulesData.data.abstractResponse.responseStatus === 'RUL005') {
-                yield put({type: SEARCH_RULES_SUCCESS, payload: searchRulesData.data.rule});
+                yield put({type: SEARCH_RULES_SUCCESS, payload: searchRulesData.data});
             } else {
                 yield put({type: SEARCH_RULES_FAILED, payload: searchRulesData.data.abstractResponse.responseMessage});
             }
@@ -75,6 +75,7 @@ function* fetchViewRule({payload}) {
             }
 
             if (viewRuleData.data.abstractResponse.responseStatus === 'RUL002') {
+                // console.log(viewRuleData.data.rule)
                 let responseData = viewRuleData.data.rule;
                 responseData.type = payload.type;
                 yield put({type: VIEW_RULE_SUCCESS, payload: responseData});
@@ -221,6 +222,10 @@ export function* viewRule(){
 }
 
 export function* editRule(){
+    yield takeEvery(UPDATE_RULE, postEditRule);
+}
+
+export function* updateRule(){
     yield takeEvery(UPDATE_RULE, postEditRule);
 }
 

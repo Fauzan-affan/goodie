@@ -90,6 +90,19 @@ import SearchReconciliationPayable from "../containers/Reconciliation/AP";
 import SearchReconciliationReceiveble from "../containers/Reconciliation/AR";
 import SearchReconciliationPointfee from "../containers/Reconciliation/pointfeereport";
 import ViewReconciliation from "../containers/Reconciliation/view";
+import Store from "../containers/Store/index";
+import SearchStore from "../containers/Store/search";
+import ViewStore from "../containers/Store/view";
+import CreateStore from "../containers/Store/createstore";
+import UpdateStore from "../containers/Store/updatestore";
+// import Crud from "../containers/Crud/index";
+// import SearchCrud from "../containers/Crud/search";
+// import ViewCrud from "../containers/Crud/view";
+// import CreateUpdateCrud from "../containers/Crud/createupdate";
+// import CrudContent from "../containers/CrudContent/index";
+// import SearchCrudContent from "../containers/CrudContent/search";
+// import ViewCrudContent from "../containers/CrudContent/view";
+// import CreateUpdateCrudContent from "../containers/CrudContent/createupdate";
 
 
 const App = ({match}) => (
@@ -128,7 +141,7 @@ const App = ({match}) => (
             <Route exact path={`${match.url}user/:id/password`} component={ChangePasswordUser}/>
             <Route exact path={`${match.url}user/roles`} component={SearchRole}/>
             <Route exact path={`${match.url}roles/view/:id`} component={ViewRole}/>
-             <Route exact path={`${match.url}user/roles/:id/:type?`} component={CreateUpdateRole}/>
+            <Route exact path={`${match.url}user/roles/:id/:type?`} component={CreateUpdateRole}/>
             <Route exact path={`${match.url}user/search`} component={SearchUser}/>
             <Route exact path={`${match.url}user/view/:id`} component={ViewUser}/>
             <Route exact path={`${match.url}user/create`} component={CreateUser}/>
@@ -188,6 +201,19 @@ const App = ({match}) => (
             <Route exact path={`${match.url}reconciliation/receiveble`} component={SearchReconciliationReceiveble}/>
             <Route exact path={`${match.url}reconciliation/pointfee`} component={SearchReconciliationPointfee}/>
             {/*<Route exact path={`${match.url}reconciliation/view/:id`} component={ViewReconciliation}/>*/}
+            <Route exact path={`${match.url}store`} component={Store}/>
+            <Route exact path={`${match.url}store/search`} component={SearchStore}/>
+            <Route exact path={`${match.url}store/view/:id`} component={ViewStore}/>
+            <Route exact path={`${match.url}store/create`} component={CreateStore}/>
+            <Route exact path={`${match.url}store/:id/update`} component={UpdateStore}/>
+            {/* <Route exact path={`${match.url}crud`} component={Crud}/>
+            <Route exact path={`${match.url}crud/search`} component={SearchCrud}/>
+            <Route exact path={`${match.url}crud/view/:id`} component={ViewCrud}/>
+            <Route exact path={`${match.url}crud/:type/:productType/:id?`} component={CreateUpdateCrud}/>
+            <Route exact path={`${match.url}crud_content`} component={CrudContent}/>
+            <Route exact path={`${match.url}crud_content/search`} component={SearchCrudContent}/>
+            <Route exact path={`${match.url}crud_content/view/:id`} component={ViewCrudContent}/>
+            <Route exact path={`${match.url}crud_content/:type/:productType/:id?`} component={CreateUpdateCrudContent}/> */}
         </Switch>
     </div>
 );

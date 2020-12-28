@@ -13,7 +13,8 @@ export const searchAdvertisingApi = ({authToken, deviceId, userId, merchantId, s
                 name : search,
                 page : page,
                 size : size,
-                nRecords : 10
+                nRecords : 10,
+                existingDate : 0
             },
             data: {},
             headers:{

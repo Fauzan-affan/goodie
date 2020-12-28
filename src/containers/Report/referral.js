@@ -6,13 +6,16 @@ import {
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import {message,
+import {message,Tabs, Card,
     // Card, Col,
 } from "antd";
+import AmCharts from "@amcharts/amcharts3-react";
 import CircularProgress from "components/CircularProgress/index";
 // import SweetAlert from "react-bootstrap-sweetalert";
 import moment from 'moment';
 import {CSVLink} from "react-csv";
+
+const { TabPane } = Tabs;
 
 class ReferralReport extends Component {
     csvLink = React.createRef();
@@ -50,7 +53,7 @@ class ReferralReport extends Component {
         credential.memberName = '';
         credential.startDate = '';
         credential.endDate = '';
-        credential.pageSize = 20;
+        credential.pageSize = 10;
         credential.isDownload = isDownload;
 
         if(isDownload === false){
@@ -194,6 +197,37 @@ class ReferralReport extends Component {
             });
         }
 
+        function getData() {
+            let listData = [];
+
+            for (let i = 0; i < result.length; i++) {
+              let total = 0;
+              let memberName = '';
+                for (let j = 0; j < result.length; j++) {
+                    if (result[i].date === result[j].date) {
+                        memberName = result[j].memberName
+                    }
+                }
+          
+                listData.push({
+                    date: result[i].date,
+                    memberName
+                });
+            }
+            return listData;
+        }
+
+        const data = [...getData().reduce( (item, o) => {
+            if (!item.has(o.memberName)) item.set(o.memberName, { ...o, value: 0});
+            item.get(o.memberName).value++
+            return item;
+        }, new Map).values()];
+
+        // sorter by month a year
+        // let sorted = result.sort((a, b)  =>{
+        //     return new Date(b.date) - new Date(a.date);
+        // });
+
         let filterParam = {
             search : search,
             endDate : endDate,
@@ -218,31 +252,75 @@ class ReferralReport extends Component {
         }
         ];
 
+        const config = {
+            "type": "pie",
+            "theme": "light",
+            "dataProvider": data,
+            "titleField": "memberName",
+            "valueField": "value",
+            "labelRadius": 5,
+            "outlineAlpha": 0.4,
+            "depth3D": 8,
+            "radius": "42%",
+            // "innerRadius": "60%",
+            "labelText": "[[title]]",
+            "angle": 30,
+
+            "legend":{
+                "position":"bottom",
+                "marginBottom":8    ,
+                "autoMargins":false,
+               },
+               "titles": [
+                   {
+                       "id": "Title-1",
+                       "size": 15,
+                       "text": "Chart Report Referral"
+                   }
+               ],
+            "export": {
+                "enabled": true
+            }
+        };
+
         return(
             <div>
                 <div>
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
-                    <SearchForm
-                        columns={columns}
-                        listData={result}
-                        title='Referral Member Report'
-                        placeholder='Search members by name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadData = {downloadData}
-                        filterParam = {filterParam}
-                    />
-                    : ''
-                }
+                <Card>
+                    <Tabs defaultActiveKey="1" centered>
+                        <TabPane tab="Chart Report" key="1">
+                            <Card className="gx-card"  title="">
+                                <div className="App">
+                                    <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                </div>
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Table Report" key="2">
+                            {loader === false ?
+                                <SearchForm
+                                    columns={columns}
+                                    listData={result}
+                                    title='Referral Member Report'
+                                    placeholder='Search members by name'
+                                    onFilter={this.filterComponent.bind(this)}
+                                    onClearFilter={this.clearFilterComponent.bind(this)}
+                                    recordInfo = {recordInfo}
+                                    onSearch = {this.handleSearch.bind(this)}
+                                    enableDateFilter = {true}
+                                    onFilterDate = {this.handleFilterDate.bind(this)}
+                                    enableDownload = {true}
+                                    onDownload = {this.handleDownload.bind(this)}
+                                    downloadData = {downloadData}
+                                    filterParam = {filterParam}
+                                />
+                                : ''
+                            }
+                        </TabPane>
+                    </Tabs>
+                </Card>
 
                 <CSVLink
                     data={downloadData} headers={columns}

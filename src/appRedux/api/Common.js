@@ -18,12 +18,29 @@ export const uploadImageApi = ({authToken, deviceId, userId, merchantId,file}) =
     });
 };
 
+export const getListCountryApi = () => {
+    return Axios({
+        method: 'get',
+        url: window.ApiURL + 'util/list/country',
+        params: {
+            isAsean : -1,
+            orderType : 2,
+            activeStatus : -1,
+        },
+        data: {},
+        headers:{
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    });
+};
 
-export const getListProvinceApi = () => {
+export const getListProvinceApi = ({id}) => {
     return Axios({
         method: 'get',
         url: window.ApiURL + 'util/list/province',
-        params: {},
+        params: {
+            countryId : id,
+        },
         data: {},
         headers:{
             'Content-Type': 'application/x-www-form-urlencoded'

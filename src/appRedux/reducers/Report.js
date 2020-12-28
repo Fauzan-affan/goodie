@@ -25,6 +25,7 @@ import {
     DOWNLOAD_SUCCESS
 } from "constants/ActionTypes";
 import { Result } from "antd";
+import moment from 'moment';
 
 const INIT_STATE = {
     loader: false,
@@ -238,6 +239,16 @@ export default (state = INIT_STATE, action) => {
 
         // Response
         case GET_ISSUING_REPORT_SUCCESS: {
+            let result = action.payload.result;
+            result.forEach((res, i) => {
+                res.key = i;
+                res.date = moment(res.date, 'DD/MM/YYYY hh:mm:ss'); 
+                // format that date into a different format
+                res.date = (moment(res.date).format("YYYY-MM-DD hh:mm:ss"))
+            });
+            result.sort((a,b) => {
+                return new Date(b.date) - new Date(a.date);
+            })
             return {
                 ...state,
                 loader: false,
@@ -256,6 +267,16 @@ export default (state = INIT_STATE, action) => {
         }
 
         case GET_REDEEM_REPORT_SUCCESS: {
+            let result = action.payload.result;
+            result.forEach((res, i) => {
+                res.key = i;
+                res.date = moment(res.date, 'DD/MM/YYYY hh:mm:ss'); 
+                // format that date into a different format
+                // res.date = (moment(res.date).format("YYYY-MM-DD"))
+            });
+            result.sort((a,b) => {
+                return new Date(b.date) - new Date(a.date);
+            })
             return {
                 ...state,
                 loader: false,
@@ -274,10 +295,14 @@ export default (state = INIT_STATE, action) => {
         }
 
         case GET_VOUCHER_BALANCE_REPORT_SUCCESS: {
+            let result = action.payload.result;
+            result.sort((a,b) => {
+                return new Date(b.createdDate) - new Date(a.createdDate);
+            })
             return {
                 ...state,
                 loader: false,
-                result: action.payload.result,
+                result: result,
                 recordInfo: action.payload.recordInfo
             }
         }
@@ -310,6 +335,16 @@ export default (state = INIT_STATE, action) => {
         }
 
         case GET_REFERRAL_REPORT_SUCCESS: {
+            let result = action.payload.result;
+            result.forEach((res, i) => {
+                res.key = i;
+                res.date = moment(res.date, 'DD/MM/YYYY hh:mm:ss'); 
+                // format that date into a different format
+                res.date = (moment(res.date).format("YYYY-MM-DD hh:mm:ss"))
+            });
+            result.sort((a,b) => {
+                return new Date(b.date) - new Date(a.date);
+            })
             return {
                 ...state,
                 loader: false,
@@ -328,6 +363,16 @@ export default (state = INIT_STATE, action) => {
         }
 
         case GET_POINT_TRANSACTION_REPORT_SUCCESS: {
+            let result = action.payload.result;
+            result.forEach((res, i) => {
+                res.key = i;
+                res.date = moment(res.date, 'DD/MM/YYYY hh:mm:ss'); 
+                // format that date into a different format
+                // res.date = (moment(res.date).format("YYYY-MM-DD"))
+            });
+            result.sort((a,b) => {
+                return new Date(b.date) - new Date(a.date);
+            })
             return {
                 ...state,
                 loader: false,

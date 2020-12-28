@@ -104,7 +104,7 @@ class CreateUpdateTier extends Component {
             })
         }else if (!nextProps.updateSuccess && nextProps.updateFailed){
             this.setState({
-                msgContent : 'Update failed',
+                msgContent : 'Update failed, ' +nextProps.alertMessage,
                 msgShow : true,
                 msgType : 'danger'
             })
@@ -129,7 +129,6 @@ class CreateUpdateTier extends Component {
             let id = this.state.detailId;
 
             var existingArray = this.state.dataSource.filter(function(c) { return c.key === id; })[0];
-            // console.log(existingArray);
             var updatedValue=Object.assign({}, existingArray, {['tierImage']:filePath});
             var index = this.state.dataSource.indexOf(existingArray);
 
@@ -208,7 +207,6 @@ class CreateUpdateTier extends Component {
                 // }
 
                 values.tierDetail = this.state.dataSource;
-                // console.log(values);
 
                 let request = this.props.authUser;
                 request.data = values;
@@ -305,7 +303,6 @@ class CreateUpdateTier extends Component {
     }
 
     // disabledEndDate = (endValue) => {
-    //     console.log(this.endValue);
     //     const startValue = moment(this.state.promotion.startDate, 'YYYY/MM/DD');
     //     if (!endValue || !startValue) {
     //         return false;
@@ -348,7 +345,6 @@ class CreateUpdateTier extends Component {
     handleAdd = () => {
         const { count, dataSource } = this.state;
         let lastRec = dataSource[dataSource.length - 1];
-        // console.log(lastRec);
 
         let lastMaxRef = 0
         if(lastRec){
@@ -435,7 +431,6 @@ class CreateUpdateTier extends Component {
     }
 
     updateProgram = (programs) =>{
-        // console.log(this.state.tier);
 
         let newTier = this.state.tier;
         newTier.newProgramTiers = programs;
@@ -447,7 +442,6 @@ class CreateUpdateTier extends Component {
     }
 
     updateProgram = (programs) =>{
-        // console.log(this.state.tier);
 
         let newsTier = this.state.tier;
         newsTier.newProgramTiers = programs;
@@ -840,7 +834,6 @@ class EditableCell extends React.Component {
     }
 
     componentWillMount(){
-        // console.log(this.props.record);
         if(this.props.record){
             if(this.props.record['tierImage'] != null && this.props.record['tierImage'] !== ''){
                 this.setState({
@@ -869,9 +862,6 @@ class EditableCell extends React.Component {
             upload,
             ...restProps
         } = this.props;
-
-        // console.log(text);
-        // console.log(record);
 
         const uploadButton = (
             <div>
@@ -966,8 +956,8 @@ class EditableCell extends React.Component {
 const mapStateToProps = ({auth, tierState,commonState}) => {
     const {authUser} = auth;
     const {filePath} = commonState;
-    const {tier, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData} = tierState
-    return {authUser, tier, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, filePath}
+    const {tier, alertMessage, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData} = tierState
+    return {authUser, tier, alertMessage, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, filePath}
 };
 
 export default connect(mapStateToProps, {viewTier, updateTier, createTier, resetStatus, uploadImage, resetFilePath})(Form.create()(CreateUpdateTier));

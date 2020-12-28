@@ -9,8 +9,17 @@ import {
     VIEW_MEMBER_FAILED,
     CHANGE_STATUS_MEMBER_SUCCESS,
     CHANGE_STATUS_MEMBER_FAILED,
-    UPLOAD_MEMBER, UPLOAD_MEMBER_FAILED, UPLOAD_MEMBER_SUCCESS
+    UPLOAD_MEMBER, UPLOAD_MEMBER_FAILED, UPLOAD_MEMBER_SUCCESS,
+    UPLOAD_TRANSACTION,
+    UPLOAD_TRANSACTION_SUCCESS,
+    UPLOAD_TRANSACTION_FAILED
 } from "constants/ActionTypes";
+
+import {
+    APPROVAL_MEMBER,
+    APPROVAL_MEMBER_SUCCESS,
+    APPROVAL_MEMBER_FAILED
+} from "../../constants/ActionTypes"
 
 const INIT_STATE = {
     loader: false,
@@ -26,7 +35,9 @@ const INIT_STATE = {
         pagination : null,
         filters : null,
         sorter : null,
-        search : null
+        search : null,
+        searchUsername : null,
+        searchMobileNumber : null
     },
     member: {
         memberPicture: '',
@@ -49,6 +60,15 @@ const INIT_STATE = {
         mobileNumber: '',
         emailAddress: ''
     },
+    requesList: {
+        ruleType : '',
+        // refNumber : '',
+        totalTrxAmount : '',
+        // productCode : '',
+        memberUsername : '',
+        ruleName : '',
+        issuing : '',
+    },
     updateSuccess: false,
     updateFailed: false,
     createSuccess: false,
@@ -57,7 +77,10 @@ const INIT_STATE = {
     deleteFailed: false,
     uploadSuccess : false,
     uploadFailed : false,
-
+    uploadTrxSuccess : false,
+    uploadTrxFailed : false,
+    approvalMemberSuccess: false,
+    approvalmemberFailed: false
 };
 
 
@@ -89,7 +112,9 @@ export default (state = INIT_STATE, action) => {
                     pagination : null,
                     filters : null,
                     sorter : null,
-                    search : null
+                    search : null,
+                    searchUsername : null,
+                    searchMobileNumber : null
                 }
             }
         }
@@ -114,7 +139,10 @@ export default (state = INIT_STATE, action) => {
                 deleteSuccess: false,
                 deleteFailed : false,
                 uploadSuccess : false,
+                uploadTrxSuccess : false,
                 uploadFailed : false,
+                uploadTrxFailed : false,
+                approvalMemberSuccess : false
             }
         }
 
@@ -124,6 +152,15 @@ export default (state = INIT_STATE, action) => {
                 loader : true,
                 uploadSuccess : false,
                 uploadFailed : false,
+            }
+        }
+
+        case UPLOAD_TRANSACTION : {
+            return {
+                ...state,
+                loader : true,
+                uploadTrxSuccess : false,
+                uploadTrxFailed : false,
             }
         }
 
@@ -202,6 +239,51 @@ export default (state = INIT_STATE, action) => {
             }
         }
 
+        case UPLOAD_TRANSACTION_SUCCESS : {
+            return {
+                ...state,
+                loader: false,
+                uploadTrxSuccess : true,
+                uploadTrxFailed : false,
+            }
+        }
+
+        case UPLOAD_TRANSACTION_FAILED : {
+            return {
+                ...state,
+                loader: false,
+                uploadTrxSuccess : false,
+                uploadTrxFailed : true,
+                alertMessage: action.payload
+            }
+        }
+
+        case APPROVAL_MEMBER : {
+            return {
+                ...state,
+                loader: false,
+                approvalMemberSuccess: false,
+                approvalmemberFailed: false
+            }
+        }
+
+        case APPROVAL_MEMBER_SUCCESS : {
+            return {
+                ...state,
+                loader: false,
+                approvalMemberSuccess: true,
+                approvalmemberFailed: false
+            }
+        }
+
+        case APPROVAL_MEMBER_FAILED : {
+            return {
+                ...state,
+                loader: false,
+                approvalMemberSuccess: false,
+                approvalmemberFailed: true
+            }
+        }
 
         default:
             return state;

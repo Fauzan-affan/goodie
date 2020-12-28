@@ -2,12 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 // import LogRocket from 'logrocket';
 
-import NextApp from './NextApp';
-// import registerServiceWorker from './registerServiceWorker';
+// import NextApp from './NextApp';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker'
+import { AppContainer } from 'react-hot-loader';
+
+import CircularProgress from "components/CircularProgress/index";
+const NextApp = React.lazy(() => import('./NextApp'));
 
 // Add this import:
-import {AppContainer} from 'react-hot-loader';
 
 //Environment
 window.environment = 'Development';
@@ -29,7 +31,13 @@ const render = Component => {
   ReactDOM.render(
     // Wrap App inside AppContainer
     <AppContainer>
-      <NextApp/>
+      <React.Suspense fallback={
+        <div className="gx-loader-view">
+          <CircularProgress />
+        </div>
+      }>
+        <NextApp/>
+      </React.Suspense>
     </AppContainer>,
     document.getElementById('root')
   );

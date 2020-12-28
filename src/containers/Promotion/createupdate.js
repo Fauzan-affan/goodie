@@ -15,12 +15,16 @@ import {
 import {
     getTierDetails
 } from "appRedux/actions/Tier";
+import {
+    searchPrograms
+} from "appRedux/actions/Program"
 import ExpiryPointType from '../../constants/ExpiryPointType';
-import {Button, Card, DatePicker, Form, Input, InputNumber, Popconfirm, Select, Table} from "antd";
+import {Button, Card, DatePicker, Form, Input, InputNumber, Popconfirm, Select, Table, Radio, Switch} from "antd";
 import moment from "moment";
 
 
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
 const formItemLayout = {
@@ -51,7 +55,8 @@ class CreateUpdatePromotion extends Component {
             count: 0,
             endOpen: false,
             showDay : {},
-            showDate : {}
+            showDate : {},
+            specificPromo: 0
         };
 
         this.onConfirm = this.onConfirm.bind(this);
@@ -63,7 +68,7 @@ class CreateUpdatePromotion extends Component {
 
         this.props.searchRules(credential);
         this.props.getTierDetails(credential);
-
+        this.props.searchPrograms(credential);
 
         if(this.props.match.params.type === 'update'){
             credential.id = this.props.match.params.id;
@@ -81,7 +86,6 @@ class CreateUpdatePromotion extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-
         if (nextProps.listRules !== undefined) {
 
             let dataRaw = [];
@@ -264,7 +268,7 @@ class CreateUpdatePromotion extends Component {
             })
         }else if (!nextProps.createSuccess && nextProps.createFailed){
             this.setState({
-                msgContent : 'Create failed',
+                msgContent : 'Create failed, '+nextProps.alertMessage,
                 msgShow : true,
                 msgType : 'danger'
             })
@@ -596,12 +600,28 @@ class CreateUpdatePromotion extends Component {
             selectedRule: newData
         });
     }
-    //End - Action For Rule
+    // End - Action For Rule
+    
+    handleSpecificPromo = e => {
+        let value = e.target.value
+        if(value) {
+            this.setState({
+                specificPromo: value
+            })
+        }
+    }
 
+    onChangeSwitch = (checked) => {
+        console.log(checked)
+    }
+
+    changeListReward = (value) => {
+        console.log(value)
+    }
 
     render() {
         const {getFieldDecorator} = this.props.form;
-        let {promotion, promotionTrigger} = this.state;
+        let {promotion, promotionTrigger, specificPromo} = this.state;
         const { msgShow, msgType, msgContent, disableDate, disableDay, selectedRowKeys, dataSourceTier,
             dataSourceRule, selectedRule, endOpen, showDay, showDate} = this.state;
 
@@ -619,6 +639,12 @@ class CreateUpdatePromotion extends Component {
             optionsRule.push(optionR);
         });
 
+        let optionReward = [];
+        this.props.listPrograms.forEach((reward, i) => {
+            let optionRD = 
+                <Option key={i} value={reward.programId}>{reward.programName}</Option>;
+            optionReward.push(optionRD)
+        })
 
         //For Tier
         const columnsTierRaw = [{
@@ -715,8 +741,8 @@ class CreateUpdatePromotion extends Component {
         });
         //End - For Rule
 
-        console.log("this.state")
-        console.log(this.state)
+        // console.log("this.state")
+        // console.log(this.state)
 
         return(
             <Card className="gx-card" title='Promotion'>
@@ -851,20 +877,80 @@ class CreateUpdatePromotion extends Component {
                     </FormItem>
 
 
-                    <FormItem {...formItemLayout} label='Rules'>
-                        <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                            Add point rule for this promotion
-                        </Button>
-                        <Table
-                            className="gx-table-responsive"
-                            components={componentsRule}
-                            rowClassName={() => 'editable-row'}
-                            bordered
-                            dataSource={selectedRule}
-                            columns={columnsRule}
-                        />
-                    </FormItem>
+                    <FormItem {...formItemLayout} label='Specific Promotion'>
+                        <RadioGroup onChange={this.handleSpecificPromo} value={specificPromo}>
+                            <Radio value={1}>Point</Radio>
+                            <Radio value={2}>Reward</Radio>
+                        </RadioGroup>
 
+                    </FormItem>
+                    
+                    {
+                        specificPromo !== 0 && specificPromo === 1 ? (
+                            <FormItem {...formItemLayout} label='Point'>
+                                <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
+                                    Add point rule for this promotion
+                                </Button>
+                                <Table
+                                    className="gx-table-responsive"
+                                    components={componentsRule}
+                                    rowClassName={() => 'editable-row'}
+                                    bordered
+                                    dataSource={selectedRule}
+                                    columns={columnsRule}
+                                />
+                            </FormItem>
+                        ) : ""
+                    }
+
+                    {
+                        specificPromo !== 0 && specificPromo === 2 ? (
+                            <>
+                            <FormItem {...formItemLayout} label='Minimal Transaction'>
+                                {getFieldDecorator('minimalTransaction', {
+                                    rules: [{
+                                        required: false,
+                                        message: 'Please input total transaction'
+                                    }],
+                                    // initialValue: promotion.description
+                                })(
+                                    <Input placeholder='Total Transaction'/>
+                                )}
+                            </FormItem>
+
+                            <FormItem {...formItemLayout} label="Deduct Point">
+                                {getFieldDecorator(
+                                "deductPoint",
+                                {}
+                                )(
+                                <Switch
+                                    checkedChildren="Yes"
+                                    unCheckedChildren="No"
+                                    onChange={this.onChangeSwitch}
+                                    // checked={statChecked}
+                                />
+                                )}
+                            </FormItem>
+
+                            <FormItem {...formItemLayout} label='Reward'>
+                                {getFieldDecorator('reward',{
+                                    // initialValue: promotion.expiredPointType,
+                                    rules: [{
+                                        required: false,
+                                        message: 'Please input reward'
+                                    }]
+                                })(
+                                    <Select 
+                                        style={{width: '50%'}}
+                                        onChange={this.changeListReward}
+                                    >
+                                        {optionReward}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            </>
+                        ) : ""
+                    }
 
                     <FormItem {...formTailLayout}>
                         <Button type="primary" htmlType="submit">Submit</Button>
@@ -1004,14 +1090,15 @@ class EditableCell extends React.Component {
     }
 }
 
-const mapStateToProps = ({auth, promotionState, rules, tierState}) => {
+const mapStateToProps = ({auth, promotionState, rules, tierState, programState}) => {
     const {authUser} = auth;
     const {listRules} = rules;
-    const {tierDetails} = tierState
-    const {promotion, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData} = promotionState;
-    return {authUser, promotion, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, listRules, tierDetails}
+    const {tierDetails} = tierState;
+    const {listPrograms} = programState;
+    const {promotion, updateSuccess, updateFailed, updateData, createSuccess, createFailed,  createData, alertMessage} = promotionState;
+    return {authUser, promotion, updateSuccess, updateFailed, updateData, createSuccess, createFailed, createData, listRules, tierDetails, alertMessage, listPrograms}
 };
 
-export default connect(mapStateToProps, {viewPromotion, updatePromotion, createPromotion, resetStatus, searchRules, getTierDetails, viewPromotionTierRule})(Form.create()(CreateUpdatePromotion));
+export default connect(mapStateToProps, {viewPromotion, updatePromotion, createPromotion, resetStatus, searchRules, getTierDetails, viewPromotionTierRule, searchPrograms})(Form.create()(CreateUpdatePromotion));
 
 

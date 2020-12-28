@@ -20,6 +20,9 @@ const INIT_STATE = {
     alertMessage: '',
     showMessage: false,
     listApproval: [],
+    showSubmerchant: false,
+    subMerchantList : [],
+    allData: [],
     recordInfo: {
         totalRecords: 0,
         page : 0,
@@ -91,6 +94,9 @@ export default (state = INIT_STATE, action) => {
                 showMessage: false,
                 alertMessage: '',
                 listApproval: [],
+                allData:[],
+                showSubmerchant: false,
+                subMerchantList : [],
                 recordInfo: {},
             }
         }
@@ -126,6 +132,9 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 loader: false,
                 listApproval: action.payload.data,
+                allData: action.payload,
+                showSubmerchant: action.payload.showSubmerchant,
+                subMerchantList : action.payload.subMerchantList,
                 recordInfo: action.payload.recordInfo
             }
         }

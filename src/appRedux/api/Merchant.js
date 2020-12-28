@@ -2,7 +2,7 @@ import Axios from 'axios';
 import { auth } from 'firebase';
 
 
-export const registerMerchantApi = ({rootRegister, email, phoneNumber, firstName, lastName, merchantName, merchantType, password, address, cityId, stateProvinceId, currencyId, lookupDtlId, postalCode, token}) => {
+export const registerMerchantApi = ({rootRegister, email, phoneNumber, firstName, lastName, merchantName, merchantType, password, address, countryId, cityId, stateProvinceId, currencyId, lookupDtlId, postalCode, token}) => {
     let url = window.ApiURL;
     let env = -1;
 
@@ -22,6 +22,7 @@ export const registerMerchantApi = ({rootRegister, email, phoneNumber, firstName
             merchantType: merchantType,
             password: password,
             address: address,
+            countryId : countryId,
             cityId: cityId,
             stateProvinceId: stateProvinceId,
             postalCode: postalCode,
@@ -40,6 +41,25 @@ export const viewMerchantApi = ({authToken, deviceId, userId, merchantId}) => {
         return Axios({
             method: 'get',
             url: window.ApiURL + 'merchant/view',
+            params: {
+                userId : userId,
+                merchantId : merchantId
+            },
+            data: {},
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'authToken': authToken,
+                'deviceUniqueId' : deviceId
+            }
+        });
+    };
+};
+
+export const searchSubMerchantApi = ({authToken, deviceId, userId, merchantId}) => {
+    if(authToken != null){
+        return Axios({
+            method: 'get',
+            url: window.ApiURL + 'merchant/submerchant/search',
             params: {
                 userId : userId,
                 merchantId : merchantId
@@ -74,6 +94,8 @@ export const updateMerchantApi = ({authToken, deviceId, userId, merchantId, data
                 lookupDtlId: data.lookupDtlId,
                 address: data.address,
                 contact: data.contact,
+                additionalFields: data.additionalFields,
+                isApproval : data.isApproval
             },
             headers:{
                 'Content-Type': 'application/json',

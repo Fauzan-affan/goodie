@@ -6,13 +6,17 @@ import {
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import {message,
+import {message, Tabs, Card,
     // Card, Col,
 } from "antd";
+import AmCharts from "@amcharts/amcharts3-react";
 import CircularProgress from "components/CircularProgress/index";
 // import SweetAlert from "react-bootstrap-sweetalert";
 import moment from 'moment';
 import {CSVLink} from "react-csv";
+import _ from 'lodash';
+
+const { TabPane } = Tabs;
 
 class RedeemReport extends Component {
     csvLink = React.createRef();
@@ -43,10 +47,13 @@ class RedeemReport extends Component {
 
     fetchData =(filterAndSort, isDownload)=>{
         let credential = this.props.authUser;
-        const {pagination, search, startDate, endDate,
-            // filters, sorter,  trxType,
+        const {pagination, search, startDate, endDate, sorter,
+            // filters,  trxType,
         } = filterAndSort;
+
         credential.page = 0;
+        credential.sortBy = 0;
+        credential.sort = 1;
         credential.memberName = '';
         credential.startDate = '';
         credential.endDate = '';
@@ -61,22 +68,17 @@ class RedeemReport extends Component {
             credential.pageSize = 9999999;
         }
 
-        // if(sorter != null){
-        //     if(sorter.field === 'memberName'){
-        //         credential.sortBy = 4;
-        //     }else if(sorter.field === '"memberUsername"'){
-        //         credential.sortBy = 3;
-        //     }else if(sorter.field === '"pointBalance"'){
-        //         credential.sortBy = 1;
-        //     }
-        //
-        //
-        //     if(sorter.order === 'ascend' ){
-        //         credential.sort = 1
-        //     }else if(sorter.order === 'descend' ){
-        //         credential.sort = 2
-        //     }
-        // }
+        if(sorter != null){
+            if(sorter.field === 'period'){
+                credential.sortBy = 1;
+            }
+
+            if(sorter.order === 'ascend' ){
+                credential.sort = 1
+            }else if(sorter.order === 'descend' ){
+                credential.sort = 2
+            }
+        }
 
         if(search != null){
             credential.memberName = search;
@@ -191,8 +193,62 @@ class RedeemReport extends Component {
             this.props.result.forEach((res, i) => {
                 res.key = i;
                 res.name = res.memberName;
+                // res.date = moment(res.date, 'DD/MM/YYYY');
+                // // //format that date into a different format
+                res.date = (moment(res.date).format("YYYY-MM-DD hh:mm:ss"))
+                res.dateDay = (moment(res.date).format("YYYY-MM-DD"))
             });
         }
+
+        // sum points for graph chart
+        function getData() {
+            let listData = [];
+
+            for (let i = 0; i < result.length; i++) {
+              let quantity = 0;
+                for (let j = 0; j < result.length; j++) {
+                    if (result[i].rewardName === result[j].rewardName) {
+                        quantity += result[j].quantity;
+                    }
+                }
+          
+                listData.push({
+                    date : result[i].date,
+                    dateDay : result[i].dateDay,
+                    rewardName: result[i].rewardName,
+                    quantity,
+                });
+            }
+            return listData;
+        }
+
+        // remove duplicate by reward Name
+        const data = [...getData().reduce( (item, o) => {
+            if (!item.has(o.rewardName)) item.set(o.rewardName, { ...o, value: 0});
+            item.get(o.rewardName).value++
+            return item;
+        }, new Map).values()];
+
+        console.log(data)
+
+        // sorted by month a year for line chart
+        let byYearAndByMonth = {};
+        _.each(data, (item) => {
+                var year = item.date.substring(0,4)
+                var month = item.date.substring(5,7)
+        
+            if (typeof byYearAndByMonth[year] === "undefined") {
+                    byYearAndByMonth[year] = {};
+            }
+            
+            if (typeof byYearAndByMonth[year][month] === "undefined") {
+                byYearAndByMonth[year][month] = [];
+            }
+            
+            byYearAndByMonth[year][month].push(item);
+         }); 
+
+         // end sorter for line chart
 
         let filterParam = {
             search : search,
@@ -235,8 +291,69 @@ class RedeemReport extends Component {
             dataIndex: 'point',
             label: 'Point',
             key: 'point',
+        }];
+
+        const config = {
+            "type": "serial",
+            "categoryField": "dateDay",
+            "dataDateFormat": "YYYY-MM",
+            "startDuration": 1,
+            "export": {
+                "enabled": true
+            },
+            "categoryAxis": {
+                "minPeriod": "MM",
+                // "parseDates": true,
+                "gridPosition": "start"
+            },
+            "chartCursor": {
+                "enabled": true,
+                "categoryBalloonDateFormat": "MMM YYYY"
+            },
+            "trendLines": [],
+            "graphs": [
+                {
+                    "balloonText": "[[title]] of [[rewardName]] :[[value]]",
+                    "bullet": "round",
+                    "id": "AmGraph-1",
+                    "markerType": "square",
+                    "title": "Quantity",
+                    "type": "smoothedLine",
+                    "valueField": "quantity"
+                },
+                {
+                    "balloonText": "[[title]] of [[rewardName]] :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-2",
+                    "markerType": "square",
+                    "title": "value",
+                    "type": "smoothedLine",
+                    "valueField": "value"
+                }
+            ],
+            "guides": [],
+            "valueAxes": [
+                {
+                    "id": "ValueAxis-1",
+                    // "title": "Axis title"
+                }
+            ],
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "position":"left",
+                "enabled": true,
+                "useGraphSettings": true
+            },
+            "titles": [
+                {
+                    "id": "Title-1",
+                    "size": 15,
+                    "text": "Chart Report Redeem Reward"
+                }
+            ],
+            "dataProvider": data
         }
-        ];
 
         return(
             <div>
@@ -244,25 +361,38 @@ class RedeemReport extends Component {
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
-                    <SearchForm
-                        columns={columns}
-                        listData={result}
-                        title='Redeem Report'
-                        placeholder='Search members by name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadData = {downloadData}
-                        filterParam = {filterParam}
-                    />
-                    : ''
-                }
+                <Card>
+                    <Tabs defaultActiveKey="1" centered>
+                        <TabPane tab="Chart Report" key="1">
+                            <Card className="gx-card"  title="">
+                                <div className="App">
+                                    <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                </div>
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Table Report" key="2">
+                            {loader === false ?
+                                <SearchForm
+                                    columns={columns}
+                                    listData={result}
+                                    title='Redeem Report'
+                                    placeholder='Search members by name'
+                                    onFilter={this.filterComponent.bind(this)}
+                                    onClearFilter={this.clearFilterComponent.bind(this)}
+                                    recordInfo = {recordInfo}
+                                    onSearch = {this.handleSearch.bind(this)}
+                                    enableDateFilter = {true}
+                                    onFilterDate = {this.handleFilterDate.bind(this)}
+                                    enableDownload = {true}
+                                    onDownload = {this.handleDownload.bind(this)}
+                                    downloadData = {downloadData}
+                                    filterParam = {filterParam}
+                                />
+                                : ''
+                            }
+                        </TabPane>
+                    </Tabs>
+                </Card>
 
                 <CSVLink
                     data={downloadData} headers={columns}

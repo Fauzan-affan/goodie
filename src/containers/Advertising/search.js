@@ -48,15 +48,15 @@ class SearchAdvertising extends Component {
         const {pagination,
             // filters,
             sorter, search} = filterAndSort;
-        credential.page = 0;
-        credential.sortBy = 1;
+            credential.page = 0;
+            credential.sortBy = 1;
         credential.sort = 2;
         credential.search = '';
-
+        
         if(pagination != null){
             credential.page = pagination.current -1;
         }
-
+        
         if(sorter != null){
             if(sorter.field === 'name'){
                 credential.sortBy = 4;
@@ -65,7 +65,7 @@ class SearchAdvertising extends Component {
             }else if(sorter.field === '"status"'){
                 credential.sortBy = 1;
             }
-
+            
 
             if(sorter.order === 'ascend' ){
                 credential.sort = 1
@@ -73,12 +73,11 @@ class SearchAdvertising extends Component {
                 credential.sort = 2
             }
         }
-
-
+        
         if(search != null){
             credential.search = search;
-        }
-
+        }        
+        
         this.props.searchAdvertising(credential);
     }
 
@@ -97,7 +96,6 @@ class SearchAdvertising extends Component {
         this.setState({
             search : value
         })
-
         this.props.filterSortSearch(newPag, filters, sorter, value);
     }
 
@@ -193,7 +191,6 @@ class SearchAdvertising extends Component {
         let {sorter, filters} = this.props.filterAndSort;
         let sortedInfo = sorter || {};
         let filteredInfo = filters || {};
-
         let filterParam = {
             search : search
         }
@@ -247,13 +244,15 @@ class SearchAdvertising extends Component {
             key: 'adsCategoryName',
             sorter: (a, b) => a.name.length - b.name.length,
             sortOrder: sortedInfo.columnKey === 'adsCategoryName' && sortedInfo.order
-        },{
-            title: 'Content',
-            dataIndex: 'adsContent',
-            key: 'adsContent',
-            sorter: (a, b) => a.name.length - b.name.length,
-            sortOrder: sortedInfo.columnKey === 'adsContent' && sortedInfo.order
-        },{
+        },
+        // {
+        //     title: 'Content',
+        //     dataIndex: 'adsContent',
+        //     key: 'adsContent',
+        //     sorter: (a, b) => a.name.length - b.name.length,
+        //     sortOrder: sortedInfo.columnKey === 'adsContent' && sortedInfo.order
+        // },
+        {
             title: 'Reward Name',
             dataIndex: 'rewardName',
             key: 'rewardName',

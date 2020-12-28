@@ -316,6 +316,10 @@ class CreateUpdateProgram extends Component {
         })
     }
 
+    onChangePoint(value) {
+        // console.log('changed', value);
+    }
+
     render() {
         if (this.props.selectedProduct == null &&
             this.state.selectedExternal.length == 0 &&
@@ -482,7 +486,12 @@ class CreateUpdateProgram extends Component {
                             }],
                             initialValue: program.pointRequired ? program.pointRequired : 0
                         })(
-                            <InputNumber min={0}/>
+                            <InputNumber min={0}
+                                style={{width: '20%'}}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                onChange={this.onChangePoint.bind(this)}
+                            />
                         )}
                     </FormItem>
 

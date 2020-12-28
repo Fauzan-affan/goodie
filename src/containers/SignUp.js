@@ -8,6 +8,7 @@ import {
     resetStatus
 } from "appRedux/actions/Merchant";
 import {
+    getListCountry,
     getListProvince,
     getListCity
 } from "appRedux/actions/Common";
@@ -56,6 +57,7 @@ class SignUP extends Component {
         super(props);
 
         this.state = {
+            listProvince : [],
             listCity : [],
             msgContent : '',
             msgType : '',
@@ -69,14 +71,17 @@ class SignUP extends Component {
     }
 
     componentWillMount() {
-        if(this.props.listProvince.length < 1){
-            this.props.getListProvince();
+        if(this.props.listCountry.length < 1){
+        this.props.getListCountry();
         }
+
+        // if(this.props.listProvince.length < 1){
+        //     this.props.getListProvince();
+        // }
     }
 
     componentDidMount() {
         if (this.captcha) {
-            // console.log("started, just a second...")
             this.captcha.reset();
         }
     }
@@ -88,7 +93,6 @@ class SignUP extends Component {
 
     verifyCallback(recaptchaToken) {
         // Here you will get the final recaptchaToken!!!
-        // console.log(recaptchaToken, "<= your recaptcha token")
         this.setState({
                 recaptchaToken : recaptchaToken
             }
@@ -96,6 +100,12 @@ class SignUP extends Component {
     }
 
     componentWillReceiveProps(nextProps){
+        if (nextProps.listProvince !== this.props.listProvince) {
+          this.setState({
+              listProvince : nextProps.listProvince
+          })
+        }
+
         if (nextProps.listCity !== this.props.listCity) {
             this.setState({
                 listCity : nextProps.listCity
@@ -116,6 +126,13 @@ class SignUP extends Component {
             })
             this.captcha.reset();
         }
+    }
+
+    changeCountry(value){
+      let request = {
+          id : value
+      }
+      this.props.getListProvince(request);
     }
 
     changeProvince(value){
@@ -149,7 +166,6 @@ class SignUP extends Component {
                     this.props.registerMerchant(values);
                 }
             }
-          // console.log("values", values)
         });
     };
 
@@ -205,8 +221,16 @@ class SignUP extends Component {
           options.push(option);
         });
 
+        let optionCountry= [];
+        this.props.listCountry.forEach((country,i)=>{
+            let option =
+                <Option key={i} value={country.id}>{country.label}</Option>
+            ;
+            optionCountry.push(option);
+        })
+
         let optionProvince= [];
-        this.props.listProvince.forEach((province,i)=>{
+        this.state.listProvince.forEach((province,i)=>{
             let option =
                 <Option key={i} value={province.id}>{province.label}</Option>
             ;
@@ -331,6 +355,27 @@ class SignUP extends Component {
                             </FormItem>
 
                             <FormItem {...formItemLayout}>
+                              {getFieldDecorator('countryId',{
+                                rules: [{
+                                  required: true,
+                                  message: 'Please input Country'
+                                }]
+                              })(
+                                  <Select
+                                      onChange={this.changeCountry.bind(this)}
+                                      placeholder={
+                                        <div>
+                                          <div style={{display:'inline-block'}} className="icon icon-map-drawing"></div>
+                                          <span style={{marginLeft:'5px'}}>Country</span>
+                                        </div>
+                                      }
+                                  >
+                                    {optionCountry}
+                                  </Select>
+                              )}
+                            </FormItem>
+
+                            <FormItem {...formItemLayout}>
                               {getFieldDecorator('stateProvinceId',{
                                 rules: [{
                                   required: true,
@@ -447,9 +492,9 @@ class SignUP extends Component {
 
 const mapStateToProps = ({auth, commonState, merchantState}) => {
     const {authUser} = auth;
-    const {listProvince, listCity} = commonState;
+    const {listProvince, listCity, listCountry} = commonState;
     const {registerSuccess, registerFailed, alertMessage, loader, showMessage} = merchantState;
-    return {authUser, listProvince, listCity, registerSuccess, registerFailed, alertMessage, loader, showMessage};
+    return {authUser, listProvince, listCity,listCountry, registerSuccess, registerFailed, alertMessage, loader, showMessage};
 };
 
-export default connect(mapStateToProps, {getListProvince,getListCity, registerMerchant, resetStatus})(Form.create()(SignUP));
+export default connect(mapStateToProps, {getListProvince,getListCity,getListCountry, registerMerchant, resetStatus})(Form.create()(SignUP));

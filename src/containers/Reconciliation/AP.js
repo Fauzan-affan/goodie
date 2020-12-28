@@ -242,7 +242,7 @@ class SearchReconciliationPayable extends Component {
     //         }
     //         this.props.filterSortSearch(pagination, filters, sorter, period, startDate, endDate);
     // }
-    filterComponent(pagination, filters, sorter, trasactionType, merchantName, type, dateString){
+    filterComponent(pagination, filters, sorter, trasactionType, merchantName, type, dateString, dateEnd){
         const {period, startDate, endDate} = this.props.filterAndSort;
         
         let stDate = startDate;
@@ -270,6 +270,11 @@ class SearchReconciliationPayable extends Component {
                 } else {
                     filters =  {'pointTransactionType': null, 'merchantPayable' : null};
                 }
+            }
+
+            if(type === 'periodDate'){
+                stDate = dateString
+                enDate = dateEnd
             }
 
             if(type === 'startDate'){
@@ -460,7 +465,7 @@ class SearchReconciliationPayable extends Component {
             beginningEndDate:beginningEndDate,
             transactionType : '',
             listMerchantName : ''
-        })
+        }, () => this.filterComponent())
         this.props.clearFilterSortSearch();
     }
 

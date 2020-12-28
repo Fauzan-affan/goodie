@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Avatar, Button, Col, Row, Tabs, Icon} from "antd";
-import About from "../../components/Profile/About/index";
+// import About from "../../components/Profile/About/index";
 import Auxiliary from "../../util/Auxiliary";
 import {connect} from "react-redux";
 import {
@@ -10,8 +10,8 @@ import {
     resetStatus
 } from "appRedux/actions/Merchant";
 import Widget from "components/Widget";
-import {aboutList} from "../../routes/socialApps/Profile/data";
-import AboutItem from "../../components/Profile/About/AboutItem";
+// import {aboutList} from "../../routes/socialApps/Profile/data";
+// import AboutItem from "../../components/Profile/About/AboutItem";
 import {ReCaptcha} from "react-recaptcha-google";
 import SweetAlert from "react-bootstrap-sweetalert";
 

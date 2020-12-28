@@ -15,12 +15,13 @@ export const searchApproval = (request) => {
     };
 };
 
-export const filterSortSearch = (pagination, filters, sorter, search, startDate, endDate) => {
+export const filterSortSearch = (pagination, filters, sorter, search, merchantCode, startDate, endDate) => {
     let filter  = {
         pagination : pagination,
         filters : filters,
         sorter : sorter,
         search : search,
+        merchantCode : merchantCode,
         startDate : startDate,
         endDate : endDate,
     };

@@ -5,7 +5,7 @@ import {
     SHOW_MESSAGE,
     UPLOAD_IMAGE
 } from "constants/ActionTypes";
-import {GET_LIST_CITY, GET_LIST_PROVINCE, UPLOAD_IMAGE_FAILED, GET_LIST_CURRENCY} from "../../constants/ActionTypes";
+import {GET_LIST_CITY, GET_LIST_PROVINCE, GET_LIST_COUNTRY, UPLOAD_IMAGE_FAILED, GET_LIST_CURRENCY} from "../../constants/ActionTypes";
 
 export const showMessage = (message) => {
     return {
@@ -45,9 +45,16 @@ export const resetFilePath = () => {
     };
 };
 
-export const getListProvince = () => {
+export const getListCountry = () => {
     return {
-        type: GET_LIST_PROVINCE
+        type: GET_LIST_COUNTRY
+    };
+};
+
+export const getListProvince = (request) => {
+    return {
+        type: GET_LIST_PROVINCE,
+        payload: request
     };
 };
 

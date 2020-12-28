@@ -193,6 +193,7 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 loader: false,
+                alertMessage: action.payload,
                 updateSuccess : false,
                 updateFailed: true,
                 updateData: {
@@ -217,6 +218,7 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 loader: false,
+                alertMessage: action.payload,
                 createSuccess : false,
                 createFailed : true,
                 createData: {

@@ -5,6 +5,9 @@ import {
     VIEW_MERCHANT,
     VIEW_MERCHANT_SUCCESS,
     VIEW_MERCHANT_FAILED,
+    SEARCH_SUB_MERCHANT,
+    SEARCH_SUB_MERCHANT_SUCCESS,
+    SEARCH_SUB_MERCHANT_FAILED,
     UPDATE_MERCHANT,
     UPDATE_MERCHANT_SUCCESS,
     UPDATE_MERCHANT_FAILED,
@@ -33,6 +36,7 @@ const INIT_STATE = {
     alertMessage: '',
     showMessage: false,
     listCurrency: [],
+    listSubMerchant: [],
     merchant: {
         merchantCode: null,
         merchantName: null,
@@ -152,6 +156,15 @@ export default (state = INIT_STATE, action) => {
             }
         }
 
+        case SEARCH_SUB_MERCHANT: {
+            return {
+                ...state,
+                loader: true,
+                showMessage: false,
+                alertMessage: ''
+            }
+        }
+
         case UPDATE_MERCHANT: {
             return {
                 ...state,
@@ -239,6 +252,24 @@ export default (state = INIT_STATE, action) => {
         }
 
         case VIEW_MERCHANT_FAILED: {
+            return {
+                ...state,
+                loader: false,
+                alertMessage: action.payload,
+                showMessage: true
+            }
+        }
+
+        case SEARCH_SUB_MERCHANT_SUCCESS: {
+            return {
+                ...state,
+                loader: false,
+                listSubMerchant: action.payload
+            }
+
+        }
+
+        case SEARCH_SUB_MERCHANT_FAILED: {
             return {
                 ...state,
                 loader: false,

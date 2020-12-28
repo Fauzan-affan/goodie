@@ -449,7 +449,7 @@ class SearchProducts extends Component {
                 {text: 'Item', value: 'Item'},
                 {text: 'Voucher', value: 'Voucher'},
                 {text: 'Coupon', value: 'Coupon'},
-                {text: 'Point', value: 'Point'},
+                // {text: 'Point', value: 'Point'},
             ],
             filteredValue: filteredInfo.productType || null,
             onFilter: (value, record) => record.productType.includes(value),

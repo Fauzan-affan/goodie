@@ -13,7 +13,6 @@ import {
     // Form,
     Modal, Button, Row, Col,
     // Upload, Icon, Table,
-
 } from "antd";
 import CircularProgress from "components/CircularProgress/index";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -304,7 +303,7 @@ class SearchBlast extends Component {
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
+                {/* {loader === false ?
                     <Modal
                         width={'70%'}
                         title="Download Example Receivers"
@@ -334,7 +333,7 @@ class SearchBlast extends Component {
                             </Row>
                         </div>
                     </Modal>
-                    : ''}
+                    : ''} */}
                 <NotificationContainer/>
 
             </div>

@@ -1,6 +1,5 @@
 import {Enum} from 'enumify';
 
-
 class BasicRuleType extends Enum{}
 
 BasicRuleType.initEnum({

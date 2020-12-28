@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 
-export const searchRulesApi = ({authToken, deviceId, userId, merchantId}) => {
+export const searchRulesApi = ({authToken, deviceId, userId, merchantId, search, page}) => {
     if(authToken != null){
         return Axios({
             method: 'get',
@@ -9,9 +9,9 @@ export const searchRulesApi = ({authToken, deviceId, userId, merchantId}) => {
             params: {
                 userId : userId,
                 merchantId : merchantId,
-                ruleName : '',
-                page : 0,
-                nRecords : 1000
+                ruleName : search,
+                page : page,
+                nRecords : 10
             },
             data: {},
             headers:{
@@ -45,9 +45,9 @@ export const viewBasicRuleApi = ({authToken, deviceId, userId, merchantId, id}) 
     };
 };
 
-export const updateBasicRuleApi = ({authToken, deviceId, userId, merchantId, id, data}) => {
+export const updateBasicRuleApi = ({authToken, deviceId, userId, merchantId, id, basicRuleStatus, data}) => {
     if(authToken != null){
-
+        // console.log(id, data)
         return Axios({
             method: 'post',
             url: window.ApiURL + 'rules/basic/update',
@@ -63,7 +63,10 @@ export const updateBasicRuleApi = ({authToken, deviceId, userId, merchantId, id,
                 amountReq: data.amountReq,
                 capPerTrx: data.capPerTrx,
                 paymentRule: data.paymentRule,
-                basicRuleDetail: data.basicRuleDetail
+                basicRuleDetail: data.basicRuleDetail,
+                isApproval: data.isApproval,
+                basicRuleStatus: basicRuleStatus,
+                status: data.status
             },
             headers:{
                 'Content-Type': 'application/json',
@@ -76,7 +79,6 @@ export const updateBasicRuleApi = ({authToken, deviceId, userId, merchantId, id,
 
 export const createBasicRuleApi = ({authToken, deviceId, userId, merchantId, data}) => {
     if(authToken != null){
-
         return Axios({
             method: 'post',
             url: window.ApiURL + 'rules/basic/create',
@@ -91,7 +93,8 @@ export const createBasicRuleApi = ({authToken, deviceId, userId, merchantId, dat
                 amountReq: data.amountReq,
                 capPerTrx: data.capPerTrx,
                 paymentRule: data.paymentRule,
-                basicRuleDetail: data.basicRuleDetail
+                basicRuleDetail: data.basicRuleDetail,
+                storeId: data.storeId
             },
             headers:{
                 'Content-Type': 'application/json',
@@ -101,7 +104,6 @@ export const createBasicRuleApi = ({authToken, deviceId, userId, merchantId, dat
         });
     };
 };
-
 
 //Referral Rule
 export const viewReferralRuleApi = ({authToken, deviceId, userId, merchantId, id}) => {
@@ -246,7 +248,6 @@ export const createCustomRuleApi = ({authToken, deviceId, userId, merchantId, da
         });
     };
 };
-
 
 export const deleteRuleApi = ({authToken, deviceId, userId, merchantId, ruleId}) => {
     if(authToken != null){

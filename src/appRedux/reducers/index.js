@@ -24,6 +24,9 @@ import depositReducer from "./Deposit";
 import gamificationReducer from "./Gamification";
 import approvalReducer from "./Approval";
 import reconciliationReducer from "./Reconciliation";
+import storeReducer from "./Store";
+// import crudReducer from "./Crud";
+// import crudContentReducer from "./CrudContent";
 
 const reducers = combineReducers({
     routing: routerReducer,
@@ -51,6 +54,9 @@ const reducers = combineReducers({
     gamificationState: gamificationReducer,
     approvalState : approvalReducer,
     reconciliationState : reconciliationReducer,
+    storeState : storeReducer,
+    // crudState : crudReducer,
+    // crudContentState : crudContentReducer,
 });
 
 export default reducers;

@@ -126,26 +126,26 @@ class ViewAdvertising extends Component {
                 value : this.state.data.rewardName,
                 type : 'text'
                 },
-                {
-                    key : 'cities',
-                    label: 'Cities',
-                    listData : details,
-                    type : 'list partial',
-                    columns : [{
-                        title: 'City Id',
-                        dataIndex: 'cityId',
-                        key: 'cityId',
-                    }, {
-                        title: 'City Name',
-                        dataIndex: 'cityName',
-                        key: 'cityName',
-                    }, {
-                        title: 'State Prov Id',
-                        dataIndex: 'stateProvId',
-                        key: 'stateProvId',
-                    }
-                    ]
-                }
+                // {
+                //     key : 'cities',
+                //     label: 'Cities',
+                //     listData : details,
+                //     type : 'list partial',
+                //     columns : [{
+                //         title: 'City Id',
+                //         dataIndex: 'cityId',
+                //         key: 'cityId',
+                //     }, {
+                //         title: 'City Name',
+                //         dataIndex: 'cityName',
+                //         key: 'cityName',
+                //     }, {
+                //         title: 'State Prov Id',
+                //         dataIndex: 'stateProvId',
+                //         key: 'stateProvId',
+                //     }
+                //     ]
+                // }
             ];
 
         return(

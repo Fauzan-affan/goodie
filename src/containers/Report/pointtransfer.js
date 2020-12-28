@@ -6,11 +6,16 @@ import {
     filterSortSearch,
     clearFilterSortSearch
 } from "appRedux/actions/Report";
-import { message } from "antd";
+import { message, Tabs, Card, } from "antd";
+import AmCharts from "@amcharts/amcharts3-react";
 import moment from 'moment';
 import CircularProgress from "components/CircularProgress/index";
 import {NotificationContainer, NotificationManager} from "react-notifications";
 import {CSVLink} from "react-csv";
+import _ from 'lodash';
+
+const { TabPane } = Tabs;
+
 
 class PointTransferReport extends Component {
     csvLink = React.createRef();
@@ -57,7 +62,7 @@ class PointTransferReport extends Component {
             // filters, sorter, trxType,
         } = filterAndSort;
         credential.page = 0;
-        credential.memberName = '';
+        credential.username = '';
         credential.startDate = '';
         credential.endDate = '';
         credential.pageSize = 20;
@@ -72,7 +77,7 @@ class PointTransferReport extends Component {
         }
 
         if(search != null){
-            credential.memberName = search;
+            credential.username = search;
         }
 
         if(startDate != null){
@@ -196,7 +201,8 @@ class PointTransferReport extends Component {
                 key : index,
                 pointTransferId: item.pointTransferId,
                 detectAccount: item.detectAccount,
-                transferDate: moment(item.transferDate).format('LL'),
+                transferDate: item.transferDate,
+                date: moment(item.transferDate).format('YYYY-MM'),
                 // // point Deduct Detail
                 pointDeduct: item.detail[0].pointDeduct,
                 pointValueDeduct: item.detail[0].pointValueDeduct,
@@ -220,16 +226,57 @@ class PointTransferReport extends Component {
             }
         })
 
-        // let object = [];
+        // sum points for graph chart
+        function getData() {
+            let listData = [];
 
-        // listPointTransfer.forEach(item =>{
-        //     item.detail.forEach(item2 => {
-        //         let obj = {
-        //             pointTransferId: item.pointTransferId,
-        //         }
-        //         object.push(obj)
-        //     })
-        // }) 
+            for (let i = 0; i < pointTransferList.length; i++) {
+              let quantity = 0;
+                for (let j = 0; j < pointTransferList.length; j++) {
+                    if (pointTransferList[i].merchantName === pointTransferList[j].merchantName) {
+                        // quantity += pointTransferList[j].quantity;
+                    }
+                }
+          
+                listData.push({
+                    date : pointTransferList[i].date,
+                    merchantName: pointTransferList[i].merchantName,
+                    // quantity,
+                });
+            }
+            return listData;
+        }
+
+        // remove duplicate by reward Name
+        const data = [...getData().reduce( (item, o) => {
+            if (!item.has(o.merchantName)) item.set(o.merchantName, { ...o, value: 0});
+            item.get(o.merchantName).value++
+            return item;
+        }, new Map).values()];
+
+        // sorter by month a year
+        let sorted = data.sort((a, b)  =>{
+            return new Date(a.date) - new Date(b.date);
+        });
+
+        // sorted by month a year for line chart
+        let byYearAndByMonth = {};
+        _.each(sorted, (item) => {
+                var year = item.date.substring(0,4)
+                var month = item.date.substring(5,7)
+        
+            if (typeof byYearAndByMonth[year] === "undefined") {
+                    byYearAndByMonth[year] = {};
+            }
+            
+            if (typeof byYearAndByMonth[year][month] === "undefined") {
+                byYearAndByMonth[year][month] = [];
+            }
+            
+            byYearAndByMonth[year][month].push(item);
+         }); 
+
+         // end sorter for line chart
         
         // column for search //
 
@@ -278,6 +325,68 @@ class PointTransferReport extends Component {
             }
         ];
 
+        const config = {
+            "type": "serial",
+            "categoryField": "date",
+            "dataDateFormat": "YYYY-MM",
+            "startDuration": 1,
+            "export": {
+                "enabled": true
+            },
+            "categoryAxis": {
+                "minPeriod": "MM",
+                // "parseDates": true,
+                "gridPosition": "start"
+            },
+            "chartCursor": {
+                "enabled": true,
+                "categoryBalloonDateFormat": "MMM YYYY"
+            },
+            "trendLines": [],
+            "graphs": [
+                // {
+                //     "balloonText": "[[title]] of [[rewardName]] :[[value]]",
+                //     "bullet": "round",
+                //     "id": "AmGraph-1",
+                //     "markerType": "square",
+                //     "title": "Quantity",
+                //     "type": "smoothedLine",
+                //     "valueField": "quantity"
+                // },
+                {
+                    "balloonText": "[[title]] of [[merchantName]] :[[value]]",
+                    "bullet": "square",
+                    "id": "AmGraph-2",
+                    "markerType": "square",
+                    "title": "Value",
+                    "type": "smoothedLine",
+                    "valueField": "value"
+                }
+            ],
+            "guides": [],
+            "valueAxes": [
+                {
+                    "id": "ValueAxis-1",
+                    // "title": "Axis title"
+                }
+            ],
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "position":"left",
+                "enabled": true,
+                "useGraphSettings": true
+            },
+            "titles": [
+                {
+                    "id": "Title-1",
+                    "size": 15,
+                    "text": "Chart Report Point Transfer"
+                }
+            ],
+            "dataProvider": sorted
+        }
+
 
         return(
             <div>
@@ -285,28 +394,41 @@ class PointTransferReport extends Component {
                     {loader === true ? <div className="gx-loader-view"><CircularProgress/></div> : null}
                     {showMessage ? message.error(alertMessage.toString()) : null}
                 </div>
-                {loader === false ?
 
-                    <SearchForm
-                        columns={columns}
-                        listData={pointTransferList}
-                        title='Point Transfer Report'
-                        placeholder='Search by member name'
-                        onFilter={this.filterComponent.bind(this)}
-                        onClearFilter={this.clearFilterComponent.bind(this)}
-                        recordInfo = {recordInfo}
-                        onSearch = {this.handleSearch.bind(this)}
-                        // enablePhoneNumber = {true}                       
-                        enableDownload = {true}
-                        onDownload = {this.handleDownload.bind(this)}
-                        downloadPointTransfer = {downloadPointTransfer}
-                        enableDateFilter = {true}
-                        onFilterDate = {this.handleFilterDate.bind(this)}
-                        filterParam = {filterParam}
-                        isExpand = {true}
-                    />
-                    : ''
-                }
+                <Card>
+                    <Tabs defaultActiveKey="1" centered>
+                        <TabPane tab="Chart Report" key="1">
+                            <Card className="gx-card"  title="">
+                                <div className="App">
+                                    <AmCharts.React style={{width: "100%", height: "500px"}} options={config}/>
+                                </div>
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Table Report" key="2">
+                            {loader === false ?
+                                <SearchForm
+                                    columns={columns}
+                                    listData={pointTransferList}
+                                    title='Point Transfer Report'
+                                    placeholder='Search by Member Email'
+                                    onFilter={this.filterComponent.bind(this)}
+                                    onClearFilter={this.clearFilterComponent.bind(this)}
+                                    recordInfo = {recordInfo}
+                                    onSearch = {this.handleSearch.bind(this)}
+                                    // enablePhoneNumber = {true}                       
+                                    enableDownload = {true}
+                                    onDownload = {this.handleDownload.bind(this)}
+                                    downloadPointTransfer = {downloadPointTransfer}
+                                    enableDateFilter = {true}
+                                    onFilterDate = {this.handleFilterDate.bind(this)}
+                                    filterParam = {filterParam}
+                                    isExpand = {true}
+                                />
+                                : ''
+                            }
+                        </TabPane>
+                    </Tabs>
+                </Card>
 
 
                 <CSVLink

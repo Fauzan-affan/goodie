@@ -151,6 +151,10 @@ body {
   background: #b24a17 !important;
 }
 
+.custom-store{
+  background: #01406b;
+}
+
 .custom-clear-button{
   margin-top: 10px;
   margin-left: 20px;
@@ -248,7 +252,7 @@ body {
 }
 
 .ant-input-search{
-  width: 25% !important;
+  width: 25%;
 }
 
 .editable-cell {
@@ -387,6 +391,15 @@ body {
 
 .custom-collab-item{
   cursor: pointer;
+}
+
+.show{
+  display: block;
+  height: 50.67px !important;
+}
+
+.hide{
+  display: none;
 }
 
 @media (max-width: 736px){

@@ -2,3 +2,5 @@ node_modules
 build
 .idea
 .DS_Store
+.vscode
+.debug.log

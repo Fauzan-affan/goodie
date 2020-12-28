@@ -187,7 +187,6 @@ export const referralReportApi = ({authToken, deviceId, userId, merchantId, memb
 };
 
 export const pointTransactionApi = ({authToken, deviceId, userId, merchantId, memberName, trxType, startDate, endDate, page, pageSize}) => {
-    console.log(authToken, deviceId)
     if(authToken != null){
         var mulai = 0;
         var baris = 20;
@@ -225,7 +224,7 @@ export const pointTransactionApi = ({authToken, deviceId, userId, merchantId, me
     };
 };
 
-export const pointTransferApi = ({authToken, deviceId, userId, merchantId, orderBy, orderType, pageSize, page, nRecords, role, startDate, endDate}) => {
+export const pointTransferApi = ({authToken, deviceId, userId, merchantId, orderBy, orderType, pageSize, page, nRecords, role, startDate, endDate, username}) => {
     if(authToken != null){
         var mulai = 0;
         var baris = 20;
@@ -252,6 +251,7 @@ export const pointTransferApi = ({authToken, deviceId, userId, merchantId, order
                 role : 1,
                 startDate : startDate,
                 endDate : endDate,
+                username: username,
             },
             data: {},
             headers:{

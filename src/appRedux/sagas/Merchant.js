@@ -6,6 +6,9 @@ import {
     VIEW_MERCHANT,
     VIEW_MERCHANT_SUCCESS,
     VIEW_MERCHANT_FAILED,
+    SEARCH_SUB_MERCHANT,
+    SEARCH_SUB_MERCHANT_SUCCESS,
+    SEARCH_SUB_MERCHANT_FAILED,
     UPDATE_MERCHANT,
     UPDATE_MERCHANT_SUCCESS,
     UPDATE_MERCHANT_FAILED,
@@ -23,6 +26,7 @@ import {
 import {
     registerMerchantApi,
     viewMerchantApi,
+    searchSubMerchantApi,
     getListCurrencyApi,
     // getCurrencyApi,
     updateMerchantApi,
@@ -91,6 +95,35 @@ function* fetchViewMerchant({payload}) {
             }else{
                 yield put({
                     type: VIEW_MERCHANT_FAILED,
+                    payload: 'Sorry, this feature is not accessible at this time.'
+                });
+            }
+        }
+    }
+}
+
+function* fetchSearchSubMerchant({payload}) {
+    if(payload != null){
+        try {
+            let searchSubMerchantData = yield call(searchSubMerchantApi, payload);
+            if (searchSubMerchantData.data.abstractResponse.responseStatus === 'INQ000') {
+                yield put({type: SEARCH_SUB_MERCHANT_SUCCESS, payload: searchSubMerchantData.data.subMerchantList.merchants});
+            } else {
+                yield put({type: SEARCH_SUB_MERCHANT_FAILED, payload: searchSubMerchantData.data.abstractResponse.responseMessage});
+            }
+        } catch (error) {
+            if(error.response !== undefined) {
+                if (error.response.data.abstractResponse.responseStatus === 'AUTH001') {
+                    yield put({type: BACK_TO_LOGIN, payload: error.response.data.abstractResponse.responseMessage});
+                } else {
+                    yield put({
+                        type: SEARCH_SUB_MERCHANT_FAILED,
+                        payload: error.response.data.abstractResponse.responseMessage
+                    });
+                }
+            }else{
+                yield put({
+                    type: SEARCH_SUB_MERCHANT_FAILED,
                     payload: 'Sorry, this feature is not accessible at this time.'
                 });
             }
@@ -319,6 +352,10 @@ export function* viewMerchant(){
     yield takeEvery(VIEW_MERCHANT, fetchViewMerchant);
 }
 
+export function* searchSubMerchant(){
+    yield takeEvery(SEARCH_SUB_MERCHANT, fetchSearchSubMerchant);
+}
+
 export function* getListCurrency(){
     yield takeEvery(GET_LIST_CURRENCY, fetchListCurrency);
 }
@@ -357,6 +394,7 @@ export default function* rootSaga() {
     yield all([
         fork(registerMerchant),
         fork(viewMerchant),
+        fork(searchSubMerchant),
         fork(getListCurrency),
         fork(getCurrency),
         fork(getCurrencyMerchant),

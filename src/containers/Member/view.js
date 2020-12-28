@@ -1,13 +1,11 @@
 import React, {Component} from "react";
 import ViewForm from '../../components/Form/view';
-// import {currency} from '../../constants/Util';
 import {connect} from "react-redux";
 import {
     viewMember
 } from "appRedux/actions/Member";
 import {message} from "antd";
 import CircularProgress from "components/CircularProgress/index";
-// import RedeemFreq from '../../constants/RedeemFreq';
 
 class ViewMember extends Component {
     constructor(props) {
@@ -89,12 +87,6 @@ class ViewMember extends Component {
                     value : this.state.member.birthDate,
                     type : 'text'
                 },
-                // {
-                //     key : 'gender',
-                //     label : 'Gender',
-                //     value : this.state.member.gender,
-                //     type : 'text'
-                // }
             ];
 
         return(

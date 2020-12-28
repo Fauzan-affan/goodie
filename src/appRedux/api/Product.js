@@ -1,12 +1,15 @@
 import Axios from 'axios';
 
-
 export const searchProductsApi = ({
     authToken, 
     deviceId, 
     userId, 
-    merchantId, 
-    isExternal, 
+    merchantId,
+    currencyType,
+    search, 
+    isExternal,
+    sortbyNumber,
+    sortNumber, 
     ...restParams
 }) => {
     if(authToken != null){
@@ -16,8 +19,12 @@ export const searchProductsApi = ({
             params: {
                 userId : userId,
                 merchantId : merchantId,
-                productCode : '',
-                productType : '',
+                productName: search,
+                sort: sortNumber,
+                sortBy: sortbyNumber,
+                // productCode : '',
+                // productType : '',
+                currencyId : currencyType,
                 isExternal : isExternal,
                 page : 0,
                 nRecords : 1000,

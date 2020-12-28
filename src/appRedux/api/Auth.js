@@ -1,6 +1,5 @@
 import Axios from 'axios';
 
-
 export const signInUserWithEmailPasswordRequest = ({username, password}) => {
     return Axios({
         method: 'post',
